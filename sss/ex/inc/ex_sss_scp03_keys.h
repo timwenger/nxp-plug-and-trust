@@ -28,8 +28,8 @@
 /* doc:end:android-scp03-path */
 #elif defined(__linux__)
 /* doc:start:linux-scp03-path */
-#define EX_SSS_SCP03_FILE_DIR "/tmp/SE05X/"
-#define EX_SSS_SCP03_FILE_PATH EX_SSS_SCP03_FILE_DIR "plain_scp.txt"
+#define EX_SSS_SCP03_FILE_DIR ENERSYS_SCP_KEYS_PATH
+#define EX_SSS_SCP03_FILE_PATH EX_SSS_SCP03_FILE_DIR ENERSYS_SCP_KEYS_FILENAME
 /* doc:end:linux-scp03-path */
 #elif defined(_MSC_VER)
 /* doc:start:windows-scp03-path */
