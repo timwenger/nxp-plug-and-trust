@@ -4,7 +4,6 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.5.0)
 project (ex_ecc)
 
 SET(SIMW_LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/..)
-INCLUDE(${SIMW_LIB_DIR}/simw_lib.cmake)
 
 IF("${PTMW_SE05X_Auth}" STREQUAL "None")
 ADD_EXECUTABLE(${PROJECT_NAME} ${SIMW_SE_SOURCES} ../sss/ex/ecc/ex_sss_ecc.c)

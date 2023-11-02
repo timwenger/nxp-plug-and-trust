@@ -189,10 +189,10 @@ ENDIF()
 #########################################################
 IF(WithCodeCoverage)
     IF(CMAKE_COMPILER_IS_GNUCXX)
-        INCLUDE(${SIMW_LIB_DIR}/scripts/jenkins/scripts/utils/CodeCoverage.cmake)
+        INCLUDE(scripts/jenkins/scripts/utils/CodeCoverage.cmake)
         APPEND_COVERAGE_COMPILER_FLAGS()
     ENDIF()
 ENDIF()
 #########################################################
 
-CONFIGURE_FILE(${SIMW_LIB_DIR}/sss/inc/fsl_sss_ftr.h.in ${SIMW_LIB_DIR}/fsl_sss_ftr.h)
+CONFIGURE_FILE(sss/inc/fsl_sss_ftr.h.in fsl_sss_ftr.h)
