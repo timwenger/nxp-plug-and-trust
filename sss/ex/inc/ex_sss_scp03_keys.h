@@ -8,6 +8,7 @@
 #define SSS_EX_INC_EX_SSS_SCP03_KEYS_H_
 
 #include "ex_sss_tp_scp03_keys.h"
+#include "../../../build/configurations/enersys-defines.h"
 
 /* ************************************************************************** */
 /* Includes                                                                   */

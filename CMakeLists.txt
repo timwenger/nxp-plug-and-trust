@@ -3,8 +3,8 @@ project(nxp-mini-middleware)
 
 include(simw_lib.cmake)
 
-set(SCP_KEYS_PATH "/home/enersys-user/tims-scp-keys/")
-set(SCP_KEYS_FILENAME "plain_scp.txt")
+set(SCP_KEYS_PATH "\"/home/enersys-user/tims-scp-keys/\"")
+set(SCP_KEYS_FILENAME "\"plain_scp.txt\"")
 add_subdirectory(configurations)
 
 add_subdirectory(ecc_example)
