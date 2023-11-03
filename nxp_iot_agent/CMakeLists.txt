@@ -5,7 +5,11 @@
 
 PROJECT(nxp_iot_agent LANGUAGES C)
 
-FILE(
+message("configuring project:\n" ${PROJECT_NAME} "\n")
+
+set(IOT_AGENT_DIR  ${SIMW_LIB_DIR}/nxp_iot_agent)
+
+file(
     GLOB
     NXP_IOT_AGENT_FILES
     inc/*.h
@@ -13,22 +17,52 @@ FILE(
     src/*.c
     src/protobuf/*.h
     src/protobuf/*.c
-)
-
-FILE(
-GLOB
-    NXP_IOT_AGENT_OPENSSL_FILES
+    # iot agent openssl files
     platform/openssl/*.h
     platform/openssl/*.h.in
     platform/openssl/*.c
 )
 
-set(NXP_IOT_AGENT_FILES ${NXP_IOT_AGENT_FILES} ${NXP_IOT_AGENT_OPENSSL_FILES})
+add_library(nxp_iot_agent ${NXP_IOT_AGENT_FILES})
+
+target_include_directories(
+    nxp_iot_agent
+    PUBLIC inc
+    PUBLIC platform
+    PUBLIC src/protobuf
+    PUBLIC port/default
+    PUBLIC platform/openssl
+    PUBLIC ${SIMW_INC_DIR} # includes from the common middleware libraries
+)
+
+target_link_libraries(
+    nxp_iot_agent
+    ${OPENSSL_LIBRARIES}
+    se05x
+    smCom
+    ex_common
+    SSS_APIs
+    nxp_iot_agent_common
+    ${LIBS_SYSTEM}
+)
+
+target_compile_definitions(nxp_iot_agent PRIVATE OPENSSL_LOAD_CONF)
+# PB = protocol buffer
+target_compile_definitions(nxp_iot_agent PRIVATE PB_FIELD_32BIT)
 
 
-ADD_LIBRARY(nxp_iot_agent ${NXP_IOT_AGENT_FILES})
+add_subdirectory(ex)
 
-IF(
+if(SSS_HAVE_HOST_IMXLINUX)
+    install(TARGETS nxp_iot_agent DESTINATION lib)
+endif()
+
+
+# setting the compiler warning options
+# not sure what compiler is used for G2. 
+# on rpi, /usr/bin/cc is used for C, and /usr/bin/c++ is used for C++
+
+if(
     CMAKE_CXX_COMPILER
     MATCHES
     ".*clang"
@@ -40,61 +74,11 @@ IF(
     ${PROJECT_NAME}
     PUBLIC -Wno-format
     PUBLIC -Wno-error=format)
-ENDIF()
+endif()
 
-TARGET_INCLUDE_DIRECTORIES(
-    nxp_iot_agent
-    PUBLIC inc
-    PUBLIC platform
-    PUBLIC src/protobuf
-)
+# NXP TODO: Get rid of -Wno-format -Wno-format-security
 
-TARGET_INCLUDE_DIRECTORIES(
-    nxp_iot_agent
-    PUBLIC port/default
-)
-
-
-
-TARGET_LINK_LIBRARIES(
-nxp_iot_agent
-${OPENSSL_LIBRARIES}
-)
-
-TARGET_INCLUDE_DIRECTORIES(
-nxp_iot_agent
-PUBLIC platform/openssl
-)
-
-TARGET_COMPILE_DEFINITIONS(nxp_iot_agent PRIVATE OPENSSL_LOAD_CONF)
-
-
-TARGET_LINK_LIBRARIES(
-    nxp_iot_agent
-    se05x
-)
-
-TARGET_COMPILE_DEFINITIONS(nxp_iot_agent PRIVATE PB_FIELD_32BIT)
-
-
-TARGET_LINK_LIBRARIES(
-    nxp_iot_agent
-    smCom
-    ex_common
-    SSS_APIs
-    nxp_iot_agent_common
-    ${LIBS_SYSTEM}
-)
-
-ADD_SUBDIRECTORY(ex)
-
-IF(SSS_HAVE_HOST_PCLINUX OR SSS_HAVE_HOST_IMXLINUX)
-    INSTALL(TARGETS nxp_iot_agent DESTINATION lib)
-ENDIF()
-
-# TODO: Get rid of -Wno-format -Wno-format-security
-
-IF("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
   TARGET_COMPILE_OPTIONS(
     ${PROJECT_NAME}
     PRIVATE -Wno-error=format
@@ -104,4 +88,4 @@ IF("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     PRIVATE -Wno-address-of-packed-member
     PRIVATE -Wno-incompatible-pointer-types
     )
-ENDIF()
+endif()

@@ -12,6 +12,9 @@ configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/enersys-defines.h #output
     )
 
+# for building on the imx (not raspberry pi)
+set(SSS_HAVE_HOST_IMXLINUX ON)
+
 add_subdirectory(ecc_example)
 
-ADD_SUBDIRECTORY(nxp_iot_agent)
+add_subdirectory(nxp_iot_agent)
