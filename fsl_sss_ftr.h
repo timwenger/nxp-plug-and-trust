@@ -59,42 +59,6 @@
 /** NXP Internal testing Applet */
 #define SSS_HAVE_APPLET_LOOPBACK 0
 
-#if (( 0                             \
-    + SSS_HAVE_APPLET_NONE           \
-    + SSS_HAVE_APPLET_A71CH          \
-    + SSS_HAVE_APPLET_A71CL          \
-    + SSS_HAVE_APPLET_A71CH_SIM      \
-    + SSS_HAVE_APPLET_SE05X_A        \
-    + SSS_HAVE_APPLET_SE05X_B        \
-    + SSS_HAVE_APPLET_SE05X_C        \
-    + SSS_HAVE_APPLET_SE05X_L        \
-    + SSS_HAVE_APPLET_SE051_H        \
-    + SSS_HAVE_APPLET_AUTH           \
-    + SSS_HAVE_APPLET_SE050_E        \
-    + SSS_HAVE_APPLET_LOOPBACK       \
-    ) > 1)
-#        error "Enable only one of 'PTMW_Applet'"
-#endif
-
-
-#if (( 0                             \
-    + SSS_HAVE_APPLET_NONE           \
-    + SSS_HAVE_APPLET_A71CH          \
-    + SSS_HAVE_APPLET_A71CL          \
-    + SSS_HAVE_APPLET_A71CH_SIM      \
-    + SSS_HAVE_APPLET_SE05X_A        \
-    + SSS_HAVE_APPLET_SE05X_B        \
-    + SSS_HAVE_APPLET_SE05X_C        \
-    + SSS_HAVE_APPLET_SE05X_L        \
-    + SSS_HAVE_APPLET_SE051_H        \
-    + SSS_HAVE_APPLET_AUTH           \
-    + SSS_HAVE_APPLET_SE050_E        \
-    + SSS_HAVE_APPLET_LOOPBACK       \
-    ) == 0)
-#        error "Enable at-least one of 'PTMW_Applet'"
-#endif
-
-
 
 /** PTMW_SE05X_Ver : SE05X Applet version.
  *
@@ -111,24 +75,6 @@
 
 /** SE051 */
 #define SSS_HAVE_SE05X_VER_07_02 1
-
-#if (( 0                             \
-    + SSS_HAVE_SE05X_VER_03_XX       \
-    + SSS_HAVE_SE05X_VER_06_00       \
-    + SSS_HAVE_SE05X_VER_07_02       \
-    ) > 1)
-#        error "Enable only one of 'PTMW_SE05X_Ver'"
-#endif
-
-
-#if (( 0                             \
-    + SSS_HAVE_SE05X_VER_03_XX       \
-    + SSS_HAVE_SE05X_VER_06_00       \
-    + SSS_HAVE_SE05X_VER_07_02       \
-    ) == 0)
-#        error "Enable at-least one of 'PTMW_SE05X_Ver'"
-#endif
-
 
 
 /** PTMW_HostCrypto : Counterpart Crypto on Host
@@ -158,26 +104,6 @@
  * Many :ref:`sssftr-control` have to be disabled to have a valid build. */
 #define SSS_HAVE_HOSTCRYPTO_NONE 0
 
-#if (( 0                             \
-    + SSS_HAVE_HOSTCRYPTO_MBEDTLS    \
-    + SSS_HAVE_HOSTCRYPTO_OPENSSL    \
-    + SSS_HAVE_HOSTCRYPTO_USER       \
-    + SSS_HAVE_HOSTCRYPTO_NONE       \
-    ) > 1)
-#        error "Enable only one of 'PTMW_HostCrypto'"
-#endif
-
-
-#if (( 0                             \
-    + SSS_HAVE_HOSTCRYPTO_MBEDTLS    \
-    + SSS_HAVE_HOSTCRYPTO_OPENSSL    \
-    + SSS_HAVE_HOSTCRYPTO_USER       \
-    + SSS_HAVE_HOSTCRYPTO_NONE       \
-    ) == 0)
-#        error "Enable at-least one of 'PTMW_HostCrypto'"
-#endif
-
-
 
 /** PTMW_mbedTLS_ALT : ALT Engine implementation for mbedTLS
  *
@@ -199,26 +125,6 @@
  * When this is selected, cloud demos can not work with mbedTLS */
 #define SSS_HAVE_MBEDTLS_ALT_NONE 1
 
-#if (( 0                             \
-    + SSS_HAVE_MBEDTLS_ALT_SSS       \
-    + SSS_HAVE_MBEDTLS_ALT_A71CH     \
-    + SSS_HAVE_MBEDTLS_ALT_PSA       \
-    + SSS_HAVE_MBEDTLS_ALT_NONE      \
-    ) > 1)
-#        error "Enable only one of 'PTMW_mbedTLS_ALT'"
-#endif
-
-
-#if (( 0                             \
-    + SSS_HAVE_MBEDTLS_ALT_SSS       \
-    + SSS_HAVE_MBEDTLS_ALT_A71CH     \
-    + SSS_HAVE_MBEDTLS_ALT_PSA       \
-    + SSS_HAVE_MBEDTLS_ALT_NONE      \
-    ) == 0)
-#        error "Enable at-least one of 'PTMW_mbedTLS_ALT'"
-#endif
-
-
 
 /** PTMW_SCP : Secure Channel Protocol
  *
@@ -233,24 +139,6 @@
 
 /** Use Host Crypto Layer for SCP03. Legacy implementation. Used for older demos of A71CH Family. */
 #define SSS_HAVE_SCP_SCP03_HOSTCRYPTO 0
-
-#if (( 0                             \
-    + SSS_HAVE_SCP_NONE              \
-    + SSS_HAVE_SCP_SCP03_SSS         \
-    + SSS_HAVE_SCP_SCP03_HOSTCRYPTO  \
-    ) > 1)
-#        error "Enable only one of 'PTMW_SCP'"
-#endif
-
-
-#if (( 0                             \
-    + SSS_HAVE_SCP_NONE              \
-    + SSS_HAVE_SCP_SCP03_SSS         \
-    + SSS_HAVE_SCP_SCP03_HOSTCRYPTO  \
-    ) == 0)
-#        error "Enable at-least one of 'PTMW_SCP'"
-#endif
-
 
 
 /** PTMW_FIPS : Enable or disable FIPS
@@ -270,26 +158,6 @@
 /** FIPS 140-3 */
 #define SSS_HAVE_FIPS_140_3 0
 
-#if (( 0                             \
-    + SSS_HAVE_FIPS_NONE             \
-    + SSS_HAVE_FIPS_SE050            \
-    + SSS_HAVE_FIPS_140_2            \
-    + SSS_HAVE_FIPS_140_3            \
-    ) > 1)
-#        error "Enable only one of 'PTMW_FIPS'"
-#endif
-
-
-#if (( 0                             \
-    + SSS_HAVE_FIPS_NONE             \
-    + SSS_HAVE_FIPS_SE050            \
-    + SSS_HAVE_FIPS_140_2            \
-    + SSS_HAVE_FIPS_140_3            \
-    ) == 0)
-#        error "Enable at-least one of 'PTMW_FIPS'"
-#endif
-
-
 
 /** PTMW_SBL : Enable/Disable SBL Bootable support
  *
@@ -301,21 +169,6 @@
 
 /** SE050 based LPC55S SBL bootable */
 #define SSS_HAVE_SBL_SBL_LPC55S 0
-
-#if (( 0                             \
-    + SSS_HAVE_SBL_NONE              \
-    + SSS_HAVE_SBL_SBL_LPC55S        \
-    ) > 1)
-#        error "Enable only one of 'PTMW_SBL'"
-#endif
-
-
-#if (( 0                             \
-    + SSS_HAVE_SBL_NONE              \
-    + SSS_HAVE_SBL_SBL_LPC55S        \
-    ) == 0)
-#        error "Enable at-least one of 'PTMW_SBL'"
-#endif
 
 
 
@@ -358,34 +211,6 @@
 /** ECKey and PlatfSCP03 */
 #define SSS_HAVE_SE05X_AUTH_ECKEY_PLATFSCP03 0
 
-#if (( 0                             \
-    + SSS_HAVE_SE05X_AUTH_NONE       \
-    + SSS_HAVE_SE05X_AUTH_USERID     \
-    + SSS_HAVE_SE05X_AUTH_PLATFSCP03 \
-    + SSS_HAVE_SE05X_AUTH_AESKEY     \
-    + SSS_HAVE_SE05X_AUTH_ECKEY      \
-    + SSS_HAVE_SE05X_AUTH_USERID_PLATFSCP03 \
-    + SSS_HAVE_SE05X_AUTH_AESKEY_PLATFSCP03 \
-    + SSS_HAVE_SE05X_AUTH_ECKEY_PLATFSCP03 \
-    ) > 1)
-#        error "Enable only one of 'PTMW_SE05X_Auth'"
-#endif
-
-
-#if (( 0                             \
-    + SSS_HAVE_SE05X_AUTH_NONE       \
-    + SSS_HAVE_SE05X_AUTH_USERID     \
-    + SSS_HAVE_SE05X_AUTH_PLATFSCP03 \
-    + SSS_HAVE_SE05X_AUTH_AESKEY     \
-    + SSS_HAVE_SE05X_AUTH_ECKEY      \
-    + SSS_HAVE_SE05X_AUTH_USERID_PLATFSCP03 \
-    + SSS_HAVE_SE05X_AUTH_AESKEY_PLATFSCP03 \
-    + SSS_HAVE_SE05X_AUTH_ECKEY_PLATFSCP03 \
-    ) == 0)
-#        error "Enable at-least one of 'PTMW_SE05X_Auth'"
-#endif
-
-
 
 /** PTMW_A71CH_AUTH : A71CH Authentication
  *
@@ -397,22 +222,6 @@
 
 /** SCP03 enabled */
 #define SSS_HAVE_A71CH_AUTH_SCP03 0
-
-#if (( 0                             \
-    + SSS_HAVE_A71CH_AUTH_NONE       \
-    + SSS_HAVE_A71CH_AUTH_SCP03      \
-    ) > 1)
-#        error "Enable only one of 'PTMW_A71CH_AUTH'"
-#endif
-
-
-#if (( 0                             \
-    + SSS_HAVE_A71CH_AUTH_NONE       \
-    + SSS_HAVE_A71CH_AUTH_SCP03      \
-    ) == 0)
-#        error "Enable at-least one of 'PTMW_A71CH_AUTH'"
-#endif
-
 
 
 /** PTMW_OpenSSL : For PC, which OpenSSL to pick up
@@ -426,21 +235,6 @@
 
 /** Use 3.0 version (Only applicable on PC) */
 #define SSS_HAVE_OPENSSL_3_0 0
-
-#if (( 0                             \
-    + SSS_HAVE_OPENSSL_1_1_1         \
-    + SSS_HAVE_OPENSSL_3_0           \
-    ) > 1)
-#        error "Enable only one of 'PTMW_OpenSSL'"
-#endif
-
-
-#if (( 0                             \
-    + SSS_HAVE_OPENSSL_1_1_1         \
-    + SSS_HAVE_OPENSSL_3_0           \
-    ) == 0)
-// #        error "Enable at-least one of 'PTMW_OpenSSL'"
-#endif
 
 
 /* ====================================================================== *
@@ -543,28 +337,9 @@
 
 
 /* Version checks GTE - Greater Than Or Equal To */
-#if SSS_HAVE_APPLET_SE05X_IOT
-#    if SSS_HAVE_SE05X_VER_07_02
-#        define SSS_HAVE_SE05X_VER_GTE_07_02 1
-#        define SSS_HAVE_SE05X_VER_GTE_06_00 1
-#        define SSS_HAVE_SE05X_VER_GTE_03_XX 1
-#    endif /* SSS_HAVE_SE05X_VER_07_02 */
-#    if SSS_HAVE_SE05X_VER_06_00
-#        define SSS_HAVE_SE05X_VER_GTE_07_02 0
-#        define SSS_HAVE_SE05X_VER_GTE_06_00 1
-#        define SSS_HAVE_SE05X_VER_GTE_03_XX 1
-#    endif /* SSS_HAVE_SE05X_VER_06_00 */
-#    if SSS_HAVE_SE05X_VER_03_XX
-#        define SSS_HAVE_SE05X_VER_GTE_07_02 0
-#        define SSS_HAVE_SE05X_VER_GTE_06_00 0
-#        define SSS_HAVE_SE05X_VER_GTE_03_XX 1
-#    endif /* SSS_HAVE_SE05X_VER_03_XX */
-#else //SSS_HAVE_APPLET_SE05X_IOT
-#   define SSS_HAVE_SE05X_VER_GTE_03_XX 0
-#   define SSS_HAVE_SE05X_VER_GTE_06_00 0
-#   define SSS_HAVE_SE05X_VER_GTE_07_02 0
-#endif // SSS_HAVE_APPLET_SE05X_IOT
-/** Deprecated items. Used here for backwards compatibility. */
+#define SSS_HAVE_SE05X_VER_GTE_07_02 1
+#define SSS_HAVE_SE05X_VER_GTE_06_00 1
+#define SSS_HAVE_SE05X_VER_GTE_03_XX 1
 
 
 /* # CMake Features : END */
@@ -642,84 +417,27 @@
     + SSS_HAVE_HOSTCRYPTO_USER       \
     )
 
-#if SSS_HAVE_HOSTCRYPTO_NONE
-#   undef  SSSFTR_SE05X_AuthSession
-#   define SSSFTR_SE05X_AuthSession 0
-#endif
-
-/* Montgomery curves is not supported in SE05X_A */
-#if SSS_HAVE_APPLET_SE05X_A
-#       undef SSS_HAVE_EC_MONT
-#       define SSS_HAVE_EC_MONT 0
-    /* ED is not supported in SE050_A */
-#    if SSS_HAVE_SE05X_VER_03_XX
-#       undef SSS_HAVE_EC_ED
-#       define SSS_HAVE_EC_ED 0
-#    endif // SSS_HAVE_SE05X_VER_03_XX
-#endif // SSS_HAVE_APPLET_SE05X_A
-
-#if SSS_HAVE_RSA
-#       define SSS_HAVE_RSA_4K 1
-#endif // SSS_HAVE_RSA
 
 
-#if SSS_HAVE_ECC
-#   define SSS_HAVE_EC_NIST_192 1
-#   define SSS_HAVE_EC_NIST_224 1
-#   define SSS_HAVE_EC_NIST_256 1
-#   define SSS_HAVE_EC_NIST_384 1
-#   define SSS_HAVE_EC_NIST_521 1
-#   define SSS_HAVE_EC_BP 1
-#   define SSS_HAVE_EC_NIST_K 1
-#   define SSS_HAVE_ECDAA 1
-#   define SSS_HAVE_EDDSA 1
-#   if SSS_HAVE_APPLET_SE05X_A
-#      undef SSS_HAVE_ECDAA
-#      undef SSS_HAVE_EDDSA
-#      define SSS_HAVE_ECDAA 0
-#      define SSS_HAVE_EDDSA 0
-#   endif // SSS_HAVE_APPLET_SE05X_A
-#   if SSS_HAVE_APPLET_AUTH
-#      undef SSS_HAVE_EC_NIST_192
-#      undef SSS_HAVE_EC_NIST_224
-#      undef SSS_HAVE_EC_NIST_521
-#      undef SSS_HAVE_EC_BP
-#      undef SSS_HAVE_EC_NIST_K
-#      undef SSS_HAVE_ECDAA
-#      undef SSS_HAVE_EDDSA
-#      define SSS_HAVE_EC_NIST_192 0
-#      define SSS_HAVE_EC_NIST_224 0
-#      define SSS_HAVE_EC_NIST_521 0
-#      define SSS_HAVE_EC_BP 0
-#      define SSS_HAVE_EC_NIST_K 0
-#      define SSS_HAVE_ECDAA 0
-#      define SSS_HAVE_EDDSA 0
-#   endif // SSS_HAVE_APPLET_AUTH
-#endif // SSS_HAVE_ECC
+#define SSS_HAVE_EC_NIST_192 1
+#define SSS_HAVE_EC_NIST_224 1
+#define SSS_HAVE_EC_NIST_256 1
+#define SSS_HAVE_EC_NIST_384 1
+#define SSS_HAVE_EC_NIST_521 1
+#define SSS_HAVE_EC_BP 1
+#define SSS_HAVE_EC_NIST_K 1
+#define SSS_HAVE_ECDAA 1
+#define SSS_HAVE_EDDSA 1
+
 
 #if SSS_HAVE_APPLET
-#    if SSS_HAVE_APPLET_AUTH
-#       define SSS_HAVE_HASH_1 0
-#       define SSS_HAVE_HASH_224 0
-#       define SSS_HAVE_HASH_512 0
-#    else
-#       define SSS_HAVE_HASH_1 1
-#       define SSS_HAVE_HASH_224 1
-#       define SSS_HAVE_HASH_512 1
-#    endif // SSS_HAVE_APPLET_AUTH
+#    define SSS_HAVE_HASH_1 1
+#    define SSS_HAVE_HASH_224 1
+#    define SSS_HAVE_HASH_512 1
 #    if SSS_HAVE_APPLET_SE050_E
 #       undef SSS_HAVE_RSA
 #       define SSS_HAVE_RSA 0
 #    endif //SSS_HAVE_APPLET_SE050_E
-#    if SSS_HAVE_RSA
-#        if SSS_HAVE_APPLET_SE051_H
-#           undef SSS_HAVE_RSA_4K
-#           define SSS_HAVE_RSA_4K 0
-#           define SSS_HAVE_RSA_3K 0
-#        else
-#        define SSS_HAVE_RSA_3K 1
-#        endif //SSS_HAVE_APPLET_SE051_H
-#    endif //SSS_HAVE_RSA
 #endif
 
 
