@@ -1,12 +1,10 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.5.0)
-
 project (ex_ecc)
 
-ADD_EXECUTABLE(${PROJECT_NAME} ${SIMW_SE_SOURCES} ${SIMW_SE_AUTH_SOURCES} ../sss/ex/ecc/ex_sss_ecc.c)
+add_executable(${PROJECT_NAME} ${SIMW_SE_SOURCES} ${SIMW_SE_AUTH_SOURCES} ../sss/ex/ecc/ex_sss_ecc.c)
 
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} ssl crypto)
+target_link_libraries(${PROJECT_NAME} ssl crypto)
 
-TARGET_INCLUDE_DIRECTORIES(
+target_include_directories(
     ${PROJECT_NAME}
     PUBLIC
     ../

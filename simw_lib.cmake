@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-FILE(
+file(
     GLOB
     SIMW_SE_SOURCES
     ${SIMW_LIB_DIR}/sss/ex/src/ex_sss_boot.c
@@ -32,7 +32,7 @@ FILE(
     ${SIMW_LIB_DIR}/sss/src/keystore/keystore_pc.c
 )
 
-FILE(
+file(
     GLOB
     SIMW_SE_AUTH_SOURCES
     ##### Authenticated session to se05x
@@ -42,7 +42,7 @@ FILE(
     ${SIMW_LIB_DIR}/hostlib/hostLib/libCommon/nxScp/nxScp03_Com.c
 )
 
-FILE(
+file(
     GLOB
     SIMW_INC_DIR
     ${SIMW_LIB_DIR}
@@ -60,11 +60,11 @@ FILE(
     ${SIMW_LIB_DIR}/hostlib/hostLib/libCommon/smCom
 )
 
-ADD_DEFINITIONS(-fPIC)
-ADD_DEFINITIONS(-DSSS_USE_FTR_FILE)
-ADD_DEFINITIONS(-DSMCOM_T1oI2C)
-ADD_DEFINITIONS(-DT1oI2C)
-ADD_DEFINITIONS(-DT1oI2C_UM11225)
-ADD_DEFINITIONS(-DT1OI2C_RETRY_ON_I2C_FAILED)
+add_definitions(-fPIC)
+add_definitions(-DSSS_USE_FTR_FILE)
+add_definitions(-DSMCOM_T1oI2C)
+add_definitions(-DT1oI2C)
+add_definitions(-DT1oI2C_UM11225)
+add_definitions(-DT1OI2C_RETRY_ON_I2C_FAILED)
 
-#ADD_DEFINITIONS(-DFLOW_VERBOSE)
+#add_definitions(-DFLOW_VERBOSE)
