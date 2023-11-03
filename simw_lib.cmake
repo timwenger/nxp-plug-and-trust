@@ -3,61 +3,67 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-FILE(
-    GLOB
+set(
     SIMW_SE_SOURCES
-    sss/ex/src/ex_sss_boot.c
-    sss/ex/src/ex_sss_boot_connectstring.c
-    sss/ex/src/ex_sss_se05x.c
-    sss/ex/src/ex_sss_se05x_auth.c
-    sss/src/*.c
-    sss/src/se05x/fsl_sss_se05x_apis.c
-    sss/src/se05x/fsl_sss_se05x_mw.c
-    sss/src/se05x/fsl_sss_se05x_policy.c
-    hostlib/hostLib/libCommon/infra/*.c
-    hostlib/hostLib/libCommon/log/nxLog.c
-    hostlib/hostLib/libCommon/smCom/smCom.c
-    hostlib/hostLib/platform/rsp/se05x_reset.c
-    hostlib/hostLib/platform/generic/sm_timer.c
-    hostlib/hostLib/se05x/src/se05x_ECC_curves.c
-    hostlib/hostLib/se05x/src/se05x_mw.c
-    hostlib/hostLib/se05x/src/se05x_tlv.c
-    hostlib/hostLib/se05x_03_xx_xx/se05x_APDU.c
-    hostlib/hostLib/libCommon/smCom/smComT1oI2C.c
-    hostlib/hostLib/libCommon/smCom/T1oI2C/*.c
-    hostlib/hostLib/platform/linux/i2c_a7.c
-    sss/src/openssl/fsl_sss_openssl_apis.c
-    sss/src/keystore/keystore_cmn.c
-    sss/src/keystore/keystore_openssl.c
-    sss/src/keystore/keystore_pc.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/sss/ex/src/ex_sss_boot.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/sss/ex/src/ex_sss_boot_connectstring.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/sss/ex/src/ex_sss_se05x.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/sss/ex/src/ex_sss_se05x_auth.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/sss/src/fsl_sss_apis.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/sss/src/fsl_sss_util_asn1_der.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/sss/src/fsl_sss_util_rsa_sign_utils.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/sss/src/se05x/fsl_sss_se05x_apis.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/sss/src/se05x/fsl_sss_se05x_mw.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/sss/src/se05x/fsl_sss_se05x_policy.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/hostlib/hostLib/libCommon/infra/global_platf.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/hostlib/hostLib/libCommon/infra/sm_apdu.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/hostlib/hostLib/libCommon/infra/sm_connect.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/hostlib/hostLib/libCommon/infra/sm_errors.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/hostlib/hostLib/libCommon/infra/sm_printf.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/hostlib/hostLib/libCommon/log/nxLog.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/hostlib/hostLib/libCommon/smCom/smCom.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/hostlib/hostLib/platform/rsp/se05x_reset.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/hostlib/hostLib/platform/generic/sm_timer.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/hostlib/hostLib/se05x/src/se05x_ECC_curves.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/hostlib/hostLib/se05x/src/se05x_mw.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/hostlib/hostLib/se05x/src/se05x_tlv.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/hostlib/hostLib/se05x_03_xx_xx/se05x_APDU.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/hostlib/hostLib/libCommon/smCom/smComT1oI2C.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/hostlib/hostLib/libCommon/smCom/T1oI2C/phNxpEse_Api.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/hostlib/hostLib/libCommon/smCom/T1oI2C/phNxpEsePal_i2c.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/hostlib/hostLib/libCommon/smCom/T1oI2C/phNxpEseProto7816_3.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/hostlib/hostLib/platform/linux/i2c_a7.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/sss/src/openssl/fsl_sss_openssl_apis.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/sss/src/keystore/keystore_cmn.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/sss/src/keystore/keystore_openssl.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/sss/src/keystore/keystore_pc.c
 )
 
-FILE(
-    GLOB
+set(
     SIMW_SE_AUTH_SOURCES
     ##### Authenticated session to se05x
-    sss/ex/src/ex_sss_scp03_auth.c
-    sss/src/se05x/fsl_sss_se05x_eckey.c
-    sss/src/se05x/fsl_sss_se05x_scp03.c
-    hostlib/hostLib/libCommon/nxScp/nxScp03_Com.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/sss/ex/src/ex_sss_scp03_auth.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/sss/src/se05x/fsl_sss_se05x_eckey.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/sss/src/se05x/fsl_sss_se05x_scp03.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/hostlib/hostLib/libCommon/nxScp/nxScp03_Com.c
 )
 
-FILE(
+file(
     GLOB
     SIMW_INC_DIR
-    ${SIMW_LIB_DIR}
-    sss/inc
-    sss/port/default
-    sss/ex/src
-    sss/ex/inc
-    hostlib/hostLib/inc
-    hostlib/hostLib/libCommon/infra
-    hostlib/hostLib/libCommon/smCom
-    hostlib/hostLib/libCommon/log
-    hostlib/hostLib/libCommon/smCom/T1oI2C
-    hostlib/hostLib/se05x_03_xx_xx
-    hostlib/hostLib/platform/inc
-    hostlib/hostLib/libCommon/smCom
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/sss/inc
+    ${CMAKE_CURRENT_SOURCE_DIR}/sss/port/default
+    ${CMAKE_CURRENT_SOURCE_DIR}/sss/ex/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/sss/ex/inc
+    ${CMAKE_CURRENT_SOURCE_DIR}/hostlib/hostLib/inc
+    ${CMAKE_CURRENT_SOURCE_DIR}/hostlib/hostLib/libCommon/infra
+    ${CMAKE_CURRENT_SOURCE_DIR}/hostlib/hostLib/libCommon/smCom
+    ${CMAKE_CURRENT_SOURCE_DIR}/hostlib/hostLib/libCommon/log
+    ${CMAKE_CURRENT_SOURCE_DIR}/hostlib/hostLib/libCommon/smCom/T1oI2C
+    ${CMAKE_CURRENT_SOURCE_DIR}/hostlib/hostLib/se05x_03_xx_xx
+    ${CMAKE_CURRENT_SOURCE_DIR}/hostlib/hostLib/platform/inc
+    ${CMAKE_CURRENT_SOURCE_DIR}/hostlib/hostLib/libCommon/smCom
 )
 
 ADD_DEFINITIONS(-fPIC)
