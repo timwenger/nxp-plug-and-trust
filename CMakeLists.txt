@@ -13,3 +13,5 @@ configure_file(
     )
 
 add_subdirectory(ecc_example)
+
+ADD_SUBDIRECTORY(nxp_iot_agent)
