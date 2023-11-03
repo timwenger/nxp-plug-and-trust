@@ -3,4 +3,4 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-ADD_SUBDIRECTORY(src)
+add_subdirectory(src)

@@ -11,21 +11,9 @@ FILE(
         ../../inc/*.h
         ../../inc/*.h.in
         *.c
-        ../../src/protobuf/*.h
-        ../../src/protobuf/*.c
+        ../protobuf/*.h
+        ../protobuf/*.c
 )
-
-IF(SSS_HAVE_HOST_PCWINDOWS)
-    FILE(
-        GLOB
-            NXP_IOT_AGENT_WINDOWS_FILES
-            ../../platform/windows/*.h
-            ../../platform/windows/*.h.in
-            ../../platform/windows/*.c
-    )
-
-    set(NXP_IOT_AGENT_COMMON_FILES ${NXP_IOT_AGENT_COMMON_FILES} ${NXP_IOT_AGENT_WINDOWS_FILES})
-ENDIF()
 
 
 ADD_LIBRARY(nxp_iot_agent_common ${NXP_IOT_AGENT_COMMON_FILES})
@@ -39,36 +27,14 @@ TARGET_INCLUDE_DIRECTORIES(
     nxp_iot_agent_common
     PUBLIC ../../inc
     PUBLIC ../../platform
-    PUBLIC ../../src/protobuf
+    PUBLIC ../protobuf
     PUBLIC ../../../semslite/lib/inc
 )
 
-IF(SSS_HAVE_KSDK)
-    TARGET_INCLUDE_DIRECTORIES(
-        nxp_iot_agent_common
-        PUBLIC port/ksdk
-    )
-ELSE()
-    TARGET_INCLUDE_DIRECTORIES(
-        nxp_iot_agent_common
-        PUBLIC port/default
-    )
-ENDIF()
-
-IF(SSS_HAVE_HOSTCRYPTO_MBEDTLS)
-    TARGET_LINK_LIBRARIES(
-        nxp_iot_agent_common
-        mbedtls
-    )
-ENDIF()
-
-IF(SSS_HAVE_HOST_PCWINDOWS OR SSS_HAVE_HOST_WIN10IOT)
-    TARGET_INCLUDE_DIRECTORIES(
-        nxp_iot_agent_common
-        PUBLIC ../../platform/windows
-    )
-ENDIF()
-
+TARGET_INCLUDE_DIRECTORIES(
+    nxp_iot_agent_common
+    PUBLIC port/default
+)
 
 IF(SSS_HAVE_APPLET_SE05X_IOT)
     TARGET_LINK_LIBRARIES(
