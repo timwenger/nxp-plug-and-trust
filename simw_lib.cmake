@@ -3,6 +3,9 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
+# files supporting the example program, (ie, with ex/ in the file path)
+# are the first files listed, just to keep things clean
+
 file(
     GLOB
     SIMW_SE_SOURCES
@@ -10,6 +13,7 @@ file(
     ${SIMW_LIB_DIR}/sss/ex/src/ex_sss_boot_connectstring.c
     ${SIMW_LIB_DIR}/sss/ex/src/ex_sss_se05x.c
     ${SIMW_LIB_DIR}/sss/ex/src/ex_sss_se05x_auth.c
+
     ${SIMW_LIB_DIR}/sss/src/*.c
     ${SIMW_LIB_DIR}/sss/src/se05x/fsl_sss_se05x_apis.c
     ${SIMW_LIB_DIR}/sss/src/se05x/fsl_sss_se05x_mw.c
@@ -35,8 +39,9 @@ file(
 file(
     GLOB
     SIMW_SE_AUTH_SOURCES
-    ##### Authenticated session to se05x
+    ##### needed for authenticated sessions to se05x
     ${SIMW_LIB_DIR}/sss/ex/src/ex_sss_scp03_auth.c
+
     ${SIMW_LIB_DIR}/sss/src/se05x/fsl_sss_se05x_eckey.c
     ${SIMW_LIB_DIR}/sss/src/se05x/fsl_sss_se05x_scp03.c
     ${SIMW_LIB_DIR}/hostlib/hostLib/libCommon/nxScp/nxScp03_Com.c
@@ -45,11 +50,12 @@ file(
 file(
     GLOB
     SIMW_INC_DIR
+    ${SIMW_LIB_DIR}/sss/ex/src
+    ${SIMW_LIB_DIR}/sss/ex/inc
+
     ${SIMW_LIB_DIR}
     ${SIMW_LIB_DIR}/sss/inc
     ${SIMW_LIB_DIR}/sss/port/default
-    ${SIMW_LIB_DIR}/sss/ex/src
-    ${SIMW_LIB_DIR}/sss/ex/inc
     ${SIMW_LIB_DIR}/hostlib/hostLib/inc
     ${SIMW_LIB_DIR}/hostlib/hostLib/libCommon/infra
     ${SIMW_LIB_DIR}/hostlib/hostLib/libCommon/smCom

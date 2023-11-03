@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.5.0)
 project(nxp-mini-middleware)
+message("configuring project:\n" ${PROJECT_NAME} "\n")
 
 SET(SIMW_LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 include(simw_lib.cmake)
