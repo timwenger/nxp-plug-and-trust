@@ -51,6 +51,7 @@ target_compile_definitions(nxp_iot_agent PRIVATE OPENSSL_LOAD_CONF)
 target_compile_definitions(nxp_iot_agent PRIVATE PB_FIELD_32BIT)
 
 
+add_subdirectory(src)
 add_subdirectory(ex)
 
 if(SSS_HAVE_HOST_IMXLINUX)
