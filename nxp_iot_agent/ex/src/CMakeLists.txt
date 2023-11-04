@@ -35,7 +35,6 @@ SET(HEADER_FILES
 target_include_directories(
     nxp_iot_agent
     PUBLIC ${IOT_AGENT_DIR}/ext/jsmn
-    PUBLIC ${SIMW_INC_DIR} # includes from the common middleware libraries
 )
 
 ADD_EXECUTABLE(${PROJECT_NAME}

@@ -32,7 +32,6 @@ target_include_directories(
     PUBLIC src/protobuf
     PUBLIC port/default
     PUBLIC platform/openssl
-    PUBLIC ${SIMW_INC_DIR} # includes from the common middleware libraries
 )
 
 target_link_libraries(
