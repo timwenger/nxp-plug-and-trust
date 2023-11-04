@@ -64,6 +64,7 @@ file(
     ${SIMW_LIB_DIR}/hostlib/hostLib/se05x_03_xx_xx
     ${SIMW_LIB_DIR}/hostlib/hostLib/platform/inc
     ${SIMW_LIB_DIR}/hostlib/hostLib/libCommon/smCom
+    ${SIMW_LIB_DIR}/hostlib/hostLib/tstUtil
 )
 
 add_definitions(-fPIC)
