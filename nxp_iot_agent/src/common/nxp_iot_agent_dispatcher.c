@@ -11,7 +11,10 @@
 
 #include <nxp_iot_agent.h>
 
+// tim wenger: removed, as SE050 doesn't support sems lite
+/*
 #include "sems_lite_agent_common.h"
+*/
 
 #include "../protobuf/pb.h"
 #include "../protobuf/pb_encode.h"
@@ -180,11 +183,14 @@ bool handle_request_payload(pb_istream_t *stream, const pb_field_t *field, void 
             type = request->type;
             endpointId = request->endpointId;
         }
+		// tim wenger: removed, as SE050 doesn't support sems lite
+		/*
         else {
             // SEMS Lite agent use fixed type and endpoint id.
             type = IOT_AGENT_KS_SSS_SE05X;
             endpointId = SEMS_LITE_AGENT_KEYSTORE_ID;
         }
+		*/
 
 		iot_agent_endpoint_cache_table_entry_t* endpoint = find_endpoint_in_cache(
 			dispatcher_context->endpoints, type, endpointId);
