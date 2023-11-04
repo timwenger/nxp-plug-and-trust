@@ -4,6 +4,8 @@
 #
 
 PROJECT(nxp_iot_agent_common LANGUAGES C)
+message("configuring project:\n" ${PROJECT_NAME} "\n")
+
 
 FILE(
     GLOB
@@ -30,11 +32,8 @@ TARGET_INCLUDE_DIRECTORIES(
     PUBLIC ../../platform
     PUBLIC ../protobuf
     PUBLIC ../../../semslite/lib/inc
-)
-
-TARGET_INCLUDE_DIRECTORIES(
-    nxp_iot_agent_common
     PUBLIC port/default
+    PUBLIC ${SIMW_INC_DIR} # includes from the common middleware libraries
 )
 
 TARGET_LINK_LIBRARIES(
