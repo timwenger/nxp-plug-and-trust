@@ -42,7 +42,6 @@ target_link_libraries(
     ex_common
     SSS_APIs
     nxp_iot_agent_common
-    ${LIBS_SYSTEM}
 )
 
 target_compile_definitions(nxp_iot_agent PRIVATE OPENSSL_LOAD_CONF)

@@ -6,6 +6,8 @@
 # files supporting the example program, (ie, with ex/ in the file path)
 # are the first files listed, just to keep things clean
 
+message("Running simw_lib.cmake: setting variables for libraries, source, and include files ")
+
 file(
     GLOB
     SIMW_SE_SOURCES
@@ -66,6 +68,14 @@ file(
     ${SIMW_LIB_DIR}/hostlib/hostLib/libCommon/smCom
     ${SIMW_LIB_DIR}/hostlib/hostLib/tstUtil
 )
+
+# the "ssl" and "crypto" openssl libraries are needed for several projects
+set(OPENSSL_LIBRARIES ssl crypto)
+# these commands are only used for printing out the library locations, just for your information
+find_library(SSL_PATH ssl)
+find_library(CRYPTO_PATH crypto)
+message("using ssl library file:\n" ${SSL_PATH})
+message("using crypto library file: \n" ${CRYPTO_PATH} "\n")
 
 add_definitions(-fPIC)
 add_definitions(-DSSS_USE_FTR_FILE)

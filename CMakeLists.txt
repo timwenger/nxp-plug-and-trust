@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.5.0)
 project(nxp-mini-middleware)
 message("configuring project:\n" ${PROJECT_NAME} "\n")
 
-SET(SIMW_LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+set(SIMW_LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 include(simw_lib.cmake)
 
 set(SCP_KEYS_PATH "\"/home/enersys-user/tims-scp-keys/\"")
