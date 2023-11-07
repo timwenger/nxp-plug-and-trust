@@ -34,7 +34,6 @@ target_include_directories(
 
 add_executable(${PROJECT_NAME}
     ${iot_agent_demo_files}
-    ${iot_agent_demo_port_files}
 )
 
 target_link_libraries(
@@ -89,7 +88,6 @@ endif()
 
 add_library(rtp_client STATIC
     utils/iot_agent_rtp_client.c
-    ${iot_agent_demo_port_files}
 )
 
 target_link_libraries(
