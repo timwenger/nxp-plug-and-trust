@@ -46,12 +46,11 @@ const char* update_status_report_description(nxp_iot_UpdateStatusReport_UpdateSt
 const char* claim_code_status_description(nxp_iot_AgentClaimStatus_ClaimStatus status);
 const char* rtp_status_description(nxp_iot_AgentRtpStatus_RtpStatus status);
 void print_status_report(const nxp_iot_UpdateStatusReport* status_report);
-
-iot_agent_status_t agent_start(int argc, const char *argv[], ex_sss_boot_ctx_t *pCtx);
+iot_agent_status_t provision_secure_objects(int argc, const char *argv[], ex_sss_boot_ctx_t *pCtx);
 
 int main(int argc, const char *argv[])
 {
-    return agent_start(argc, argv, &gex_sss_demo_boot_ctx);
+    return provision_secure_objects(argc, argv, &gex_sss_demo_boot_ctx);
 }
 
 const char* update_status_report_description(nxp_iot_UpdateStatusReport_UpdateStatus status) {
@@ -142,7 +141,7 @@ void print_status_report(const nxp_iot_UpdateStatusReport* status_report) {
 	}
 }
 
-iot_agent_status_t agent_start(int argc, const char *argv[], ex_sss_boot_ctx_t *pCtx)
+iot_agent_status_t provision_secure_objects(int argc, const char *argv[], ex_sss_boot_ctx_t *pCtx)
 {
 #if IOT_AGENT_TIME_MEASUREMENT_ENABLE
     axTimeMeasurement_t iot_agent_demo_time = {0};
@@ -169,79 +168,113 @@ iot_agent_status_t agent_start(int argc, const char *argv[], ex_sss_boot_ctx_t *
     size_t number_of_services = 0U;
 	nxp_iot_UpdateStatusReport status_report = nxp_iot_UpdateStatusReport_init_default;
 
-    IOT_AGENT_INFO("Start");
+    IOT_AGENT_INFO("TIM: iot_agent_session_init");
 
     // Initialize and open a session to the secure element.
 	agent_status = iot_agent_session_init(argc, argv, pCtx);
     AGENT_SUCCESS_OR_EXIT();
+
+    IOT_AGENT_INFO("TIM: END iot_agent_session_init");
+
 
 
 #if IOT_AGENT_TIME_MEASUREMENT_ENABLE
     axTimeMeasurement_t iot_agent_claimcode_inject_time = { 0 };
     initMeasurement(&iot_agent_claimcode_inject_time);
 #endif
+
+    IOT_AGENT_INFO("TIM: iot_agent_claimcode_inject");
+
     agent_status = iot_agent_claimcode_inject(pCtx, IOT_AGENT_CLAIMCODE_STRING, strlen(IOT_AGENT_CLAIMCODE_STRING));
     AGENT_SUCCESS_OR_EXIT_MSG("Injecting claimcode failed");
+
+    IOT_AGENT_INFO("TIM: END iot_agent_claimcode_inject");
+
+
 #if IOT_AGENT_TIME_MEASUREMENT_ENABLE
     concludeMeasurement(&iot_agent_claimcode_inject_time);
     iot_agent_time.claimcode_inject_time = getMeasurement(&iot_agent_claimcode_inject_time);
 #endif  //IOT_AGENT_TIME_MEASUREMENT_ENABLE
 
+
+	    IOT_AGENT_INFO("TIM: doc: initialization of contexts - start");
+	    IOT_AGENT_INFO("TIM: iot_agent_init");
     // doc: initialization of contexts - start
     agent_status = iot_agent_init(&iot_agent_context);
     AGENT_SUCCESS_OR_EXIT();
+	    IOT_AGENT_INFO("TIM: END iot_agent_init");
+
 
     /************* Register keystore*************/
+
+	    IOT_AGENT_INFO("TIM: iot_agent_keystore_sss_se05x_init");
 
 	agent_status = iot_agent_keystore_sss_se05x_init(&keystore, EDGELOCK2GO_KEYSTORE_ID, pCtx, true);
 	AGENT_SUCCESS_OR_EXIT();
 
+	    IOT_AGENT_INFO("TIM: END iot_agent_keystore_sss_se05x_init");
+
+
+	    IOT_AGENT_INFO("TIM: iot_agent_register_keystore");
+
 	agent_status = iot_agent_register_keystore(&iot_agent_context, &keystore);
     AGENT_SUCCESS_OR_EXIT();
+	    IOT_AGENT_INFO("TIM: END iot_agent_register_keystore");
+
 
     /************* Register datastore*************/
 
 	// This is the datastore that holds connection information on how to connect to
 	// the EdgeLock 2GO cloud service itself. Typically this would be a persistent
 	// datastore which supports transactions to allow for atomic updates of
-	// the URL/port/etc. If a filesystem is available, here, we use a file-based
-	// datastore.
+	// the URL/port/etc. 
 	// Note, that the ID of the datastore is a given.
-#if DS_FS
+
+		IOT_AGENT_INFO("TIM: iot_agent_datastore_fs_init");
+
 	agent_status = iot_agent_datastore_fs_init(&edgelock2go_datastore,
 		nxp_iot_DatastoreIdentifiers_DATASTORE_EDGELOCK2GO_ID, gszEdgeLock2GoDatastoreFilename,
 		&iot_agent_service_is_configuration_data_valid);
-#elif DS_PLAIN
-	agent_status = iot_agent_datastore_plain_init(&edgelock2go_datastore,
-		nxp_iot_DatastoreIdentifiers_DATASTORE_EDGELOCK2GO_ID);
-#endif
 	AGENT_SUCCESS_OR_EXIT();
+		IOT_AGENT_INFO("TIM: END iot_agent_datastore_fs_init");
+
 
 	// If the contents of the datastore for the connectin to the EdgeLock 2O datastore
 	// are not valid (e.g. on the first boot), fill the datastore with contents
 	// from the settings contained in nxp_iot_agent_config.h
 	if (!iot_agent_service_is_configuration_data_valid(&edgelock2go_datastore)) {
+		IOT_AGENT_INFO("TIM: iot_agent_utils_write_edgelock2go_datastore");
+
 		iot_agent_utils_write_edgelock2go_datastore(&keystore, &edgelock2go_datastore,
 			EDGELOCK2GO_HOSTNAME, EDGELOCK2GO_PORT, iot_agent_trusted_root_ca_certificates);
+		IOT_AGENT_INFO("TIM: END iot_agent_utils_write_edgelock2go_datastore");
+		
 	}
 
 	// For connecting to the EdgeLock 2GO cloud service, we also need to register the
 	// datastore that contains the information on how to connect there.
+		IOT_AGENT_INFO("TIM: iot_agent_set_edgelock2go_datastore");
+
 	agent_status = iot_agent_set_edgelock2go_datastore(&iot_agent_context, &edgelock2go_datastore);
 	AGENT_SUCCESS_OR_EXIT();
+		IOT_AGENT_INFO("TIM: END iot_agent_set_edgelock2go_datastore");
 
-#if DS_FS
+
+		IOT_AGENT_INFO("TIM: iot_agent_datastore_fs_init");
 	agent_status = iot_agent_datastore_fs_init(&datastore, 0U, gszDatastoreFilename,
 		&iot_agent_service_is_configuration_data_valid);
 	AGENT_SUCCESS_OR_EXIT();
-#endif
-#if DS_PLAIN
-	agent_status = iot_agent_datastore_plain_init(&datastore, 0U);
-	AGENT_SUCCESS_OR_EXIT();
-#endif
+		IOT_AGENT_INFO("TIM: END iot_agent_datastore_fs_init");
+
+
+		IOT_AGENT_INFO("TIM: iot_agent_register_datastore");
 	agent_status = iot_agent_register_datastore(&iot_agent_context, &datastore);
     AGENT_SUCCESS_OR_EXIT();
+		IOT_AGENT_INFO("TIM: END iot_agent_register_datastore");
+
     // doc: initialization of contexts - end
+		    IOT_AGENT_INFO("TIM: doc: initialization of contexts - end");
+
 
 #if IOT_AGENT_TIME_MEASUREMENT_ENABLE
     concludeMeasurement(&iot_agent_demo_time);
@@ -249,29 +282,45 @@ iot_agent_status_t agent_start(int argc, const char *argv[], ex_sss_boot_ctx_t *
     iot_agent_time.init_time -= iot_agent_time.claimcode_inject_time;
 #endif
 
+		 IOT_AGENT_INFO("TIM: iot_agent_update_device_configuration");
+
     // doc: update device configuration - start
 	agent_status = iot_agent_update_device_configuration(&iot_agent_context, &status_report);
+		 IOT_AGENT_INFO("TIM: END iot_agent_update_device_configuration");
 
 	// We have a status report which can have some details on the operations that happened.
 	// This gives the opportunity to programmatically react on errors/failures. For demonstration
 	// purpose, print that information to the console here.
 	if ((agent_status == IOT_AGENT_SUCCESS || agent_status == IOT_AGENT_UPDATE_FAILED) && status_report.has_status) {
+		 IOT_AGENT_INFO("TIM: print_status_report");
+
 		print_status_report(&status_report);
+		 IOT_AGENT_INFO("TIM: END print_status_report");
+
 	}
+
 
 	AGENT_SUCCESS_OR_EXIT();
     // doc: update device configuration - end
 
     // doc: iterating over services - start
+		 IOT_AGENT_INFO("TIM: iot_agent_is_service_configuration_data_valid");
+
     if (!iot_agent_is_service_configuration_data_valid(&iot_agent_context))
     {
         EXIT_STATUS_MSG(IOT_AGENT_FAILURE, "Not all configuration data is valid");
     }
+		 IOT_AGENT_INFO("TIM: END iot_agent_is_service_configuration_data_valid");
+
 
     // get total number of services
+		 IOT_AGENT_INFO("TIM: iot_agent_get_number_of_services");
+
     number_of_services = iot_agent_get_number_of_services(&iot_agent_context);
     IOT_AGENT_INFO("Found configuration data for %d services.", (int) number_of_services);
     // doc: iterating over services - end
+		 IOT_AGENT_INFO("TIM: END iot_agent_get_number_of_services");
+
 
 #if IOT_AGENT_TIME_MEASUREMENT_ENABLE
     concludeMeasurement(&iot_agent_demo_time);
@@ -281,10 +330,15 @@ iot_agent_status_t agent_start(int argc, const char *argv[], ex_sss_boot_ctx_t *
 #endif
 
 exit:	//close SE session
+	IOT_AGENT_INFO("TIM: iot_agent_keystore_close_session");
 	iot_agent_keystore_close_session(&keystore);
+	IOT_AGENT_INFO("TIM: iot_agent_free_update_status_report");
 	iot_agent_free_update_status_report(&status_report);
+	IOT_AGENT_INFO("TIM: iot_agent_datastore_free: (edgelock data store)");
     iot_agent_datastore_free(&edgelock2go_datastore);
+	IOT_AGENT_INFO("TIM: iot_agent_datastore_free: (data store)");
 	iot_agent_datastore_free(&datastore);
+	IOT_AGENT_INFO("TIM: iot_agent_keystore_free");
 	iot_agent_keystore_free(&keystore);
 	return agent_status;
 }
