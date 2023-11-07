@@ -47,8 +47,6 @@ const char* claim_status_description(nxp_iot_AgentClaimStatus_ClaimStatus status
 const char* rtp_status_description(nxp_iot_AgentRtpStatus_RtpStatus status);
 const char* csp_status_description(nxp_iot_AgentCspStatus_CspStatus status);
 void print_status_report(const nxp_iot_UpdateStatusReport* status_report);
-void iot_agent_print_uid_integer(char* hexString, size_t len);
-iot_agent_status_t iot_agent_print_uid (sss_se05x_session_t* pSession);
 
 iot_agent_status_t agent_start(int argc, const char *argv[], ex_sss_boot_ctx_t *pCtx);
 
@@ -176,89 +174,6 @@ void print_status_report(const nxp_iot_UpdateStatusReport* status_report) {
 	}
 }
 
-
-void iot_agent_print_uid_integer(char* hexString, size_t len) {
-
-	char decimalString[MAX_UID_DECIMAL_STRING_SIZE + 1];
-	uint32_t weigthValueArray[MAX_UID_DECIMAL_STRING_SIZE] = { 0U };
-	uint32_t decimalDigitWeightedSum[MAX_UID_DECIMAL_STRING_SIZE] = { 0U };
-
-	// initialize variables used in the calculation
-	weigthValueArray[0] = 1U;
-	memset(decimalString, '0', MAX_UID_DECIMAL_STRING_SIZE);
-	decimalString[MAX_UID_DECIMAL_STRING_SIZE] = '\0';
-
-	// for every loop iteration:
-	// - pick the hex char in the string starting from last
-	// - compute the the contribution of the actual char to all the weighted sum
-	//   for single digits in decimal string
-	// - compute the weight values for next calculation
-	for (size_t i = 0U; i < len; i++) {
-		for (uint8_t j = 0U; j < MAX_UID_DECIMAL_STRING_SIZE; j++) {
-			// pick char
-			uint32_t charWeightedContrib = 0U;
-			char pickChar = *(hexString + len - 1U - i);
-			if ((pickChar >= '0') && (pickChar <= '9'))
-				charWeightedContrib = (uint32_t)(pickChar - '0');
-			else if ((pickChar >= 'A') && (pickChar <= 'F'))
-				charWeightedContrib = (uint32_t)(pickChar - 'A') + 10U;
-			else if ((pickChar >= 'a') && (pickChar <= 'f'))
-				charWeightedContrib = (uint32_t)(pickChar - 'a') + 10U;
-			charWeightedContrib *= weigthValueArray[j];
-			decimalDigitWeightedSum[j] += charWeightedContrib;
-		}
-		uint32_t rem = 0U;
-		for (uint8_t k = 0U; k < MAX_UID_DECIMAL_STRING_SIZE; k++) {
-			weigthValueArray[k] = rem + (weigthValueArray[k] << 4);
-			rem = weigthValueArray[k] / 10U;
-			weigthValueArray[k] %= 10U;
-		}
-	}
-
-	// from the decimal digit weighted sum compute the final decimal string
-	uint32_t rem = 0U;
-	for (uint8_t i = 0U; i < MAX_UID_DECIMAL_STRING_SIZE; i++) {
-		uint8_t index = MAX_UID_DECIMAL_STRING_SIZE - 1 - i;
-		decimalString[index] += ((rem + decimalDigitWeightedSum[i]) % 10U);
-		rem = (rem + decimalDigitWeightedSum[i]) / 10U;
-	}
-
-	// print without leasign 0s
-	char* printedString;
-	printedString = decimalString;
-	while (*printedString && *printedString == '0') printedString++;
-	IOT_AGENT_INFO("UID in decimal format: %s", printedString);
-
-}
-
-iot_agent_status_t iot_agent_print_uid (sss_se05x_session_t* pSession) {
-	iot_agent_status_t agent_status = IOT_AGENT_SUCCESS;
-	uint8_t uid[SE050_MODULE_UNIQUE_ID_LEN];
-	size_t uidLen = sizeof(uid);
-	smStatus_t sm_status;
-	SE05x_Result_t result = kSE05x_Result_NA;
-
-	sm_status = Se05x_API_CheckObjectExists(&pSession->s_ctx, (uint32_t)kSE05x_AppletResID_UNIQUE_ID, &result);
-	if (SM_OK != sm_status) {
-		EXIT_STATUS_MSG(IOT_AGENT_FAILURE, "UID not present on the secure element");
-	}
-
-	sm_status =
-		Se05x_API_ReadObject(&pSession->s_ctx, (uint32_t)kSE05x_AppletResID_UNIQUE_ID, 0U, (uint16_t)uidLen, uid, &uidLen);
-	if (SM_OK != sm_status) {
-		EXIT_STATUS_MSG(IOT_AGENT_FAILURE, "Error in reading UID from the device");
-	}
-	char uidHexString[(SE050_MODULE_UNIQUE_ID_LEN * 2U) + 1U];
-	for (uint8_t i = 0U; i < SE050_MODULE_UNIQUE_ID_LEN; i++) {
-		sprintf((uidHexString + (i * 2)), "%02X", uid[i]);
-	}
-	IOT_AGENT_INFO("UID in hex format: %s", uidHexString);
-	iot_agent_print_uid_integer(uidHexString, (((size_t)SE050_MODULE_UNIQUE_ID_LEN) * 2U));
-exit:
-	return agent_status;
-}
-
-
 iot_agent_status_t agent_start(int argc, const char *argv[], ex_sss_boot_ctx_t *pCtx)
 {
 #if IOT_AGENT_TIME_MEASUREMENT_ENABLE
@@ -307,10 +222,6 @@ iot_agent_status_t agent_start(int argc, const char *argv[], ex_sss_boot_ctx_t *
     // doc: initialization of contexts - start
     agent_status = iot_agent_init(&iot_agent_context);
     AGENT_SUCCESS_OR_EXIT();
-
-	// print the uid of the device
-	agent_status = iot_agent_print_uid((sss_se05x_session_t*)&pCtx->session);
-	AGENT_SUCCESS_OR_EXIT();
 
     /************* Register keystore*************/
 
