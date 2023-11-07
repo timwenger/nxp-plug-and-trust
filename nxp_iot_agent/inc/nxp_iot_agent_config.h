@@ -154,7 +154,7 @@
 /**
 * Flag to enable or disable claimcode injection into secure element.
 */
-#define IOT_AGENT_CLAIMCODE_INJECT_ENABLE     0
+#define IOT_AGENT_CLAIMCODE_INJECT_ENABLE     1
 
 /**
  * Set the log-level that is used for output of messages of the openssl engine. The level is a 

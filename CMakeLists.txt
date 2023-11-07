@@ -10,6 +10,7 @@ include(simw_lib.cmake)
 set(SCP_KEYS_PATH "\"/home/enersys-user/tims-scp-keys/\"")
 set(SCP_KEYS_FILENAME "\"plain_scp.txt\"")
 set(EDGELOCK_HOSTNAME "\"xvtvuubgrtr0k94q.device-link.edgelock2go.com\"")
+set(CLAIMCODE "\"ZGFjYTMxNjMtOWVkNi00OWQwLThhMjUtN2QxZTM5MTA5ZDE3MDAwMDIwNTA=\"")
 ### END   EnerSys- specific defines ###
 
 
