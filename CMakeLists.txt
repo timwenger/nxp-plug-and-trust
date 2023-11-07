@@ -5,8 +5,14 @@ message("configuring project:\n" ${PROJECT_NAME} "\n")
 set(SIMW_LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 include(simw_lib.cmake)
 
+
+### START EnerSys- specific defines ###
 set(SCP_KEYS_PATH "\"/home/enersys-user/tims-scp-keys/\"")
 set(SCP_KEYS_FILENAME "\"plain_scp.txt\"")
+set(EDGELOCK_HOSTNAME "\"xvtvuubgrtr0k94q.device-link.edgelock2go.com\"")
+### END   EnerSys- specific defines ###
+
+
 configure_file(
     "enersys-defines.h.in" #input
     ${CMAKE_CURRENT_SOURCE_DIR}/enersys-defines.h #output

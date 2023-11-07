@@ -6,6 +6,8 @@
  */
 
 #include <nxp_iot_agent_config_certificates.h>
+#include "enersys-defines.h"
+
 
 #ifndef _NXP_IOT_AGENT_CONFIG_H_
 #define _NXP_IOT_AGENT_CONFIG_H_
@@ -79,7 +81,7 @@
  * This is specific to your customer account, the needed value can be obtaine in the GUI of the 
  * EdgeLock 2GO cloud service in the company settings of the account.
  */
-#define EDGELOCK2GO_HOSTNAME             "CHANGE THIS! - company specific hostname"
+#define EDGELOCK2GO_HOSTNAME ENERSYS_EDGELOCK_HOSTNAME
 #endif
 
 #ifndef EDGELOCK2GO_PORT
