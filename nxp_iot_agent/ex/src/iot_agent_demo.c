@@ -45,7 +45,6 @@ const char * gszKeystoreFilename = "keystore.bin";
 const char* update_status_report_description(nxp_iot_UpdateStatusReport_UpdateStatus status);
 const char* claim_status_description(nxp_iot_AgentClaimStatus_ClaimStatus status);
 const char* rtp_status_description(nxp_iot_AgentRtpStatus_RtpStatus status);
-const char* csp_status_description(nxp_iot_AgentCspStatus_CspStatus status);
 void print_status_report(const nxp_iot_UpdateStatusReport* status_report);
 
 iot_agent_status_t agent_start(int argc, const char *argv[], ex_sss_boot_ctx_t *pCtx);
@@ -115,27 +114,6 @@ const char* rtp_status_description(nxp_iot_AgentRtpStatus_RtpStatus status) {
 	}
 }
 
-// csp = cloud service provisioning
-const char* csp_status_description(nxp_iot_AgentCspStatus_CspStatus status) {
-	switch (status) {
-		case nxp_iot_AgentCspStatus_CspStatus_SUCCESS: return "SUCCESS";
-		case nxp_iot_AgentCspStatus_CspStatus_SUCCESS_NO_CHANGE: return "SUCCESS_NO_CHANGE";
-		case nxp_iot_AgentCspStatus_CspStatus_SUCCESS_REVOKED: return "SUCCESS_REVOKED";
-		case nxp_iot_AgentCspStatus_CspStatus_ERR_CSP_FAILED: return "ERR_CSP_FAILED";
-		case nxp_iot_AgentCspStatus_CspStatus_ERR_KEY_SLOT_OCCUPIED: return "ERR_KEY_SLOT_OCCUPIED";
-		case nxp_iot_AgentCspStatus_CspStatus_ERR_KEY_GENERATION_FAILED: return "ERR_KEY_GENERATION_FAILED";
-		case nxp_iot_AgentCspStatus_CspStatus_ERR_KEY_READOUT_FAILED: return "ERR_KEY_READOUT_FAILED";
-		case nxp_iot_AgentCspStatus_CspStatus_ERR_MEMORY_READ_FAILED: return "ERR_MEMORY_READ_FAILED";
-		case nxp_iot_AgentCspStatus_CspStatus_ERR_MEMORY_ALLOCATION_FAILED: return "ERR_MEMORY_ALLOCATION_FAILED";
-		case nxp_iot_AgentCspStatus_CspStatus_ERR_SERVICE_DESCRIPTOR_WRITE_FAILED: return "ERR_SERVICE_DESCRIPTOR_WRITE_FAILED";
-		case nxp_iot_AgentCspStatus_CspStatus_ERR_MEMORY_COMMIT_FAILED: return "ERR_MEMORY_COMMIT_FAILED";
-		case nxp_iot_AgentCspStatus_CspStatus_ERR_DEFECTIVE: return "ERR_DEFECTIVE";
-		case nxp_iot_AgentCspStatus_CspStatus_ERR_INTERNAL: return "ERR_INTERNAL";
-		case nxp_iot_AgentCspStatus_CspStatus_ERR_TIMEOUT: return "ERR_TIMEOUT";
-		default: return "UNKNOWN";
-	}
-}
-
 void print_status_report(const nxp_iot_UpdateStatusReport* status_report) {
 	IOT_AGENT_INFO("Update status report:");
 	IOT_AGENT_INFO("  The device update %s (0x%04x: %s)",
@@ -160,16 +138,6 @@ void print_status_report(const nxp_iot_UpdateStatusReport* status_report) {
 			nxp_iot_AgentRtpStatus_RtpObjectStatus* s = &status_report->rtpStatus.details[i];
 			IOT_AGENT_INFO("    On endpoint 0x%08x, for object 0x%08x, status: 0x%04x: %s.", s->endpointId, s->objectId,
 				s->status, rtp_status_description(s->status));
-		}
-	}
-
-	if (status_report->has_cspStatus) {
-		IOT_AGENT_INFO("  Status for cloud service provisioning: 0x%04x: %s.", status_report->cspStatus.status,
-			csp_status_description(status_report->cspStatus.status));
-		for (size_t i = 0U; i < status_report->cspStatus.details_count; i++) {
-			nxp_iot_AgentCspStatus_CspServiceStatus* s = &status_report->cspStatus.details[i];
-			IOT_AGENT_INFO("    On endpoint 0x%08x, for service %d, status: 0x%04x: %s.", s->endpointId,
-				(uint32_t) s->serviceId, s->status, csp_status_description(s->status));
 		}
 	}
 }
