@@ -24,13 +24,8 @@ FILE(
     ../inc/iot_agent_config.h
     utils/iot_agent_claimcode_inject.c
     iot_agent_demo.c
-    utils/iot_agent_mqtt_paho.c
     ${IOT_AGENT_DIR}/ext/jsmn/jsmn.c
 )
-
-#SET(HEADER_FILES
-#    ../inc/iot_agent_mqtt_paho.h
-#)
 
 target_include_directories(
     nxp_iot_agent
@@ -46,7 +41,6 @@ TARGET_LINK_LIBRARIES(
     ${PROJECT_NAME}
     SSS_APIs
     nxp_iot_agent
-    paho-mqtt3cs-static
 )
 
 INSTALL(TARGETS ${PROJECT_NAME} DESTINATION bin)
@@ -55,10 +49,6 @@ INSTALL(TARGETS ${PROJECT_NAME} DESTINATION bin)
 ###################### claimcode_inject
 
 PROJECT(claimcode_inject)
-
-#SET(HEADER_FILES
-#    ../inc/iot_agent_claimcode_inject.h
-#    )
 
 ADD_EXECUTABLE(${PROJECT_NAME}
     utils/iot_agent_claimcode_inject.c
@@ -96,10 +86,6 @@ PROJECT(rtp_client)
 IF(SSS_HAVE_HOST_IMXLINUX)
     FIND_PACKAGE(Threads)
 ENDIF()
-
-#SET(HEADER_FILES
-#    ../inc/iot_agent_rtp_client.h
-#)
 
 ADD_LIBRARY(rtp_client STATIC
     utils/iot_agent_rtp_client.c

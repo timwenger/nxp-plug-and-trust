@@ -33,7 +33,6 @@
 #if SSS_HAVE_HOSTCRYPTO_OPENSSL
 #include <fsl_sss_openssl_apis.h>
 #include <openssl/opensslv.h>
-#include <iot_agent_mqtt_paho.h>
 #endif
 
 #if SSS_HAVE_SSCP
@@ -53,8 +52,6 @@
 #include "task.h"
 
 #include <iot_agent_network.h>
-
-#include <iot_agent_mqtt_freertos.h>
 
 static ex_sss_cloud_ctx_t gex_sss_demo_tls_ctx;
 ex_sss_cloud_ctx_t *pex_sss_demo_tls_ctx = &gex_sss_demo_tls_ctx;
@@ -405,174 +402,6 @@ exit:
 }
 
 
-#if	((AX_EMBEDDED && defined(USE_RTOS) && USE_RTOS == 1) || (SSS_HAVE_HOSTCRYPTO_OPENSSL)) && (IOT_AGENT_COS_OVER_RTP_ENABLE == 1)
-void iot_agent_fill_service_char_array(char** dest, char *src, size_t len)
-{
-	char* ptr = malloc(len);
-	memcpy(ptr, src, len);
-	*dest = ptr;
-}
-
-void iot_agent_free_mqtt_service_descriptor(nxp_iot_ServiceDescriptor* service_descriptor)
-{
-	if (service_descriptor->client_id != NULL)
-	{
-		free(service_descriptor->client_id);
-	}
-	if (service_descriptor->hostname != NULL)
-	{
-		free(service_descriptor->hostname);
-	}
-	if (service_descriptor->azure_id_scope != NULL)
-	{
-		free(service_descriptor->azure_id_scope);
-	}
-	if (service_descriptor->azure_registration_id != NULL)
-	{
-		free(service_descriptor->azure_registration_id);
-	}
-	if (service_descriptor->azure_global_device_endpoint != NULL)
-	{
-		free(service_descriptor->azure_global_device_endpoint);
-	}
-}
-
-// doc: configure service descriptor - start
-iot_agent_status_t iot_agent_get_mqtt_service_descriptor_for_aws(iot_agent_context_t* iot_agent_context,
-	nxp_iot_ServiceDescriptor* service_descriptor)
-{
-	iot_agent_status_t agent_status = IOT_AGENT_SUCCESS;
-
-	ASSERT_OR_EXIT_MSG(service_descriptor != NULL, "Service descriptor is null");
-
-	// AWS Service type
-	service_descriptor->identifier = AWS_SERVICE_ID;
-	service_descriptor->has_service_type = true;
-	service_descriptor->service_type = nxp_iot_ServiceType_AWSSERVICE;
-
-	// service key pair
-	service_descriptor->has_client_key_sss_ref = true;
-	service_descriptor->client_key_sss_ref.object_id = AWS_SERVICE_KEY_PAIR_ID;
-	service_descriptor->client_key_sss_ref.has_type = false;
-	service_descriptor->client_key_sss_ref.type = nxp_iot_EndpointType_INVALID;
-	service_descriptor->client_key_sss_ref.has_endpoint_id = true;
-	service_descriptor->client_key_sss_ref.endpoint_id = EDGELOCK2GO_KEYSTORE_ID;
-	service_descriptor->client_key_sss_ref.has_object_id = true;
-
-	// client certificate
-	service_descriptor->has_client_certificate_sss_ref = true;
-	service_descriptor->client_certificate_sss_ref.object_id = AWS_SERVICE_DEVICE_CERT_ID;
-	service_descriptor->client_certificate_sss_ref.has_type = false;
-	service_descriptor->client_certificate_sss_ref.type = nxp_iot_EndpointType_INVALID;
-	service_descriptor->client_certificate_sss_ref.has_endpoint_id = true;
-	service_descriptor->client_certificate_sss_ref.endpoint_id = EDGELOCK2GO_KEYSTORE_ID;
-	service_descriptor->client_certificate_sss_ref.has_object_id = true;
-
-	// AWS server certificate
-	service_descriptor->server_certificate = (pb_bytes_array_t*)&aws_root_server_cert;
-	service_descriptor->has_server_certificate_sss_ref = false;
-
-	// AWS MQTT connection parameters
-	char hostname[] = AWS_HOSTNAME;
-	iot_agent_fill_service_char_array(&service_descriptor->hostname, hostname, sizeof(hostname));
-
-	service_descriptor->has_port = true;
-	service_descriptor->port = 8883;
-	service_descriptor->has_timeout_ms = true;
-	service_descriptor->timeout_ms = 0x4E20;
-	service_descriptor->has_protocol = true;
-	service_descriptor->protocol = nxp_iot_ServiceProtocolType_MQTTS;
-
-#ifdef AWS_CLIENT_ID
-	char client_id[] = AWS_CLIENT_ID;
-	iot_agent_fill_service_char_array(&service_descriptor->client_id, client_id, sizeof(client_id));
-#else
-	service_descriptor->client_id = malloc(COMMON_NAME_MAX_SIZE);
-	memset(service_descriptor->client_id, 0, COMMON_NAME_MAX_SIZE);
-	agent_status = iot_agent_utils_get_certificate_common_name(iot_agent_context, service_descriptor, service_descriptor->client_id, COMMON_NAME_MAX_SIZE);
-	AGENT_SUCCESS_OR_EXIT();
-#endif
-
-	service_descriptor->username = NULL;
-	service_descriptor->password = NULL;
-
-	// fill metadata if any
-	service_descriptor->customer_metadata_json = NULL;
-
-exit:
-	return agent_status;
-}
-
-iot_agent_status_t iot_agent_get_service_descriptor_for_azure(iot_agent_context_t* iot_agent_context,
-	nxp_iot_ServiceDescriptor* service_descriptor)
-{
-	iot_agent_status_t agent_status = IOT_AGENT_SUCCESS;
-
-	ASSERT_OR_EXIT_MSG(service_descriptor != NULL, "Service descriptor is null");
-
-	// Azure Service type
-	service_descriptor->identifier = AZURE_SERVICE_ID;
-	service_descriptor->has_service_type = true;
-	service_descriptor->service_type = nxp_iot_ServiceType_AZURESERVICE;
-
-	// service key pair
-	service_descriptor->has_client_key_sss_ref = true;
-	service_descriptor->client_key_sss_ref.object_id = AZURE_SERVICE_KEY_PAIR_ID;
-	service_descriptor->client_key_sss_ref.has_type = false;
-	service_descriptor->client_key_sss_ref.type = nxp_iot_EndpointType_INVALID;
-	service_descriptor->client_key_sss_ref.has_endpoint_id = true;
-	service_descriptor->client_key_sss_ref.endpoint_id = EDGELOCK2GO_KEYSTORE_ID;
-	service_descriptor->client_key_sss_ref.has_object_id = true;
-
-	// service client certificate
-	service_descriptor->has_client_certificate_sss_ref = true;
-	service_descriptor->client_certificate_sss_ref.object_id = AZURE_SERVICE_DEVICE_CERT_ID;
-	service_descriptor->client_certificate_sss_ref.has_type = false;
-	service_descriptor->client_certificate_sss_ref.type = nxp_iot_EndpointType_INVALID;
-	service_descriptor->client_certificate_sss_ref.has_endpoint_id = true;
-	service_descriptor->client_certificate_sss_ref.endpoint_id = EDGELOCK2GO_KEYSTORE_ID;
-	service_descriptor->client_certificate_sss_ref.has_object_id = true;
-
-	// Azure server certificate
-	service_descriptor->server_certificate = (pb_bytes_array_t*)&azure_root_server_cert;
-	service_descriptor->has_server_certificate_sss_ref = false;
-
-	// Azure MQTT connection parameters
-	char azure_id_scope[] = AZURE_ID_SCOPE;
-	iot_agent_fill_service_char_array(&service_descriptor->azure_id_scope, azure_id_scope, sizeof(azure_id_scope));
-
-	// the registration ID will be by defualt set dynamically to the Common Name of the device leaf certficate;
-	// it is possible to hardocode it, by uncommenting the AZURE_REGISTRATION_ID in the configuration file
-#ifdef AZURE_REGISTRATION_ID
-	char azure_registration_id[] = AZURE_REGISTRATION_ID;
-	iot_agent_fill_service_char_array(&service_descriptor->azure_registration_id, azure_registration_id, sizeof(azure_registration_id));
-#else
-	service_descriptor->azure_registration_id = malloc(COMMON_NAME_MAX_SIZE);
-	memset(service_descriptor->azure_registration_id, 0, COMMON_NAME_MAX_SIZE);
-	agent_status = iot_agent_utils_get_certificate_common_name(iot_agent_context, service_descriptor, service_descriptor->azure_registration_id, COMMON_NAME_MAX_SIZE);
-	AGENT_SUCCESS_OR_EXIT();
-#endif
-
-	char azure_global_device_endpoint[] = AZURE_GLOBAL_DEVICE_ENDPOINT;
-	iot_agent_fill_service_char_array(&service_descriptor->azure_global_device_endpoint, azure_global_device_endpoint, sizeof(azure_global_device_endpoint));
-
-	service_descriptor->has_port = false;
-	service_descriptor->port = 0;
-	service_descriptor->has_timeout_ms = true;
-	service_descriptor->timeout_ms = 0x4E20;
-	service_descriptor->has_protocol = false;
-	service_descriptor->username = NULL;
-	service_descriptor->password = NULL;
-
-	// fill metadata if any
-	service_descriptor->customer_metadata_json = NULL;
-
-exit:
-	return agent_status;
-}
-// doc: configure service descriptor - end
-#endif
-
 iot_agent_status_t agent_start(int argc, const char *argv[], ex_sss_boot_ctx_t *pCtx)
 {
 #if IOT_AGENT_TIME_MEASUREMENT_ENABLE
@@ -727,40 +556,7 @@ iot_agent_status_t agent_start(int argc, const char *argv[], ex_sss_boot_ctx_t *
     memset(&iot_agent_time, 0, sizeof(iot_agent_time));
 #endif
 
-    // doc: trigger MQTT connection - start
-#if (AX_EMBEDDED && defined(USE_RTOS) && USE_RTOS == 1) || (SSS_HAVE_HOSTCRYPTO_OPENSSL)
-    agent_status = iot_agent_verify_mqtt_connection(&iot_agent_context);
-    AGENT_SUCCESS_OR_EXIT();
-#endif
-	// doc: trigger MQTT connection - end
-    // doc: trigger MQTT connection RTP - start
-#if	((AX_EMBEDDED && defined(USE_RTOS) && USE_RTOS == 1) || (SSS_HAVE_HOSTCRYPTO_OPENSSL)) && (IOT_AGENT_COS_OVER_RTP_ENABLE == 1)
-	// example code for MQTT conneciton when provisioning services as RTP objects
-	iot_agent_cleanup_mqtt_config_files_cos_over_rtp();
-	AGENT_SUCCESS_OR_EXIT();
-	// use this code for AWS services
-	// modify the connection parameters to allow connection to your AWS account
-	agent_status = iot_agent_get_mqtt_service_descriptor_for_aws(&iot_agent_context, &aws_service_descriptor);
-	AGENT_SUCCESS_OR_EXIT();
-	// in case of AWS device auto-registration the MQTT connection will fail on the first connection; in this
-	// use case add additional call to the funcion iot_agent_verify_mqtt_connection_cos_over_rtp
-	agent_status = iot_agent_verify_mqtt_connection_cos_over_rtp(&iot_agent_context, &aws_service_descriptor);
-	AGENT_SUCCESS_OR_EXIT();
-
-	// use this code for Azure services
-	agent_status = iot_agent_get_service_descriptor_for_azure(&iot_agent_context, &azure_service_descriptor);
-	AGENT_SUCCESS_OR_EXIT();
-	agent_status = iot_agent_verify_mqtt_connection_cos_over_rtp(&iot_agent_context, &azure_service_descriptor);
-	AGENT_SUCCESS_OR_EXIT();
-#endif
-	// doc: trigger MQTT connection RTP - end
-
-exit:
-#if	((AX_EMBEDDED && defined(USE_RTOS) && USE_RTOS == 1) || (SSS_HAVE_HOSTCRYPTO_OPENSSL)) && (IOT_AGENT_COS_OVER_RTP_ENABLE == 1)
-	iot_agent_free_mqtt_service_descriptor(&aws_service_descriptor);
-	iot_agent_free_mqtt_service_descriptor(&azure_service_descriptor);
-#endif
-	//close SE session
+exit:	//close SE session
 	iot_agent_keystore_close_session(&keystore);
 	iot_agent_free_update_status_report(&status_report);
     iot_agent_datastore_free(&edgelock2go_datastore);
