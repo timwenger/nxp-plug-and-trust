@@ -91,6 +91,3 @@ add_definitions(-DSMCOM_T1oI2C)
 add_definitions(-DT1oI2C)
 add_definitions(-DT1oI2C_UM11225)
 add_definitions(-DT1OI2C_RETRY_ON_I2C_FAILED)
-
-# nxp demo files respect this definition for the ex_ecc demo, but not the nxp_iot_agent_demo
-# add_definitions(-DFLOW_SILENT)

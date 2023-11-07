@@ -8,6 +8,9 @@ include(simw_lib.cmake)
 # for building on the imx (not raspberry pi)
 set(SSS_HAVE_HOST_IMXLINUX ON)
 
+# nxp demo files respect this definition for the ex_ecc demo, but not the nxp_iot_agent_demo
+# add_definitions(-DFLOW_SILENT)
+
 add_subdirectory(ecc_example)
 
 add_subdirectory(nxp_iot_agent)
