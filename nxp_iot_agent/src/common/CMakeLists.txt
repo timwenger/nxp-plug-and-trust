@@ -11,46 +11,32 @@ file(
     GLOB
         NXP_IOT_AGENT_COMMON_FILES
         ../../inc/*.h
-        ../../inc/*.h.in
         *.c
         ../protobuf/*.h
         ../protobuf/*.c
 )
 
 
-add_library(nxp_iot_agent_common ${NXP_IOT_AGENT_COMMON_FILES})
-
-# probably should be removed, since it's defined below again as private
-target_compile_definitions(
-    ${PROJECT_NAME}
-    PUBLIC PB_FIELD_32BIT
-)
+add_library(${PROJECT_NAME} ${NXP_IOT_AGENT_COMMON_FILES})
 
 target_include_directories(
-    nxp_iot_agent_common
+    ${PROJECT_NAME}
     PUBLIC ../../inc
     PUBLIC ../../platform
     PUBLIC ../protobuf
-    PUBLIC ../../../semslite/lib/inc
-    PUBLIC port/default
     PUBLIC ${SIMW_INC_DIR} # includes from the common middleware libraries
 )
 
+target_compile_definitions(${PROJECT_NAME} PRIVATE PB_FIELD_32BIT)
+
 target_link_libraries(
-    nxp_iot_agent_common
+    ${PROJECT_NAME}
     se05x
-)
-
-target_compile_definitions(nxp_iot_agent_common PRIVATE PB_FIELD_32BIT)
-
-target_link_libraries(
-    nxp_iot_agent_common
     smCom
     SSS_APIs
     ex_common
 )
 
-
 if(SSS_HAVE_HOST_IMXLINUX)
-    install(TARGETS nxp_iot_agent_common DESTINATION lib)
+    install(TARGETS ${PROJECT_NAME} DESTINATION lib)
 endif()
