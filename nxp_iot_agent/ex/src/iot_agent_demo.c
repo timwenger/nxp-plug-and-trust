@@ -43,7 +43,7 @@ const uint32_t gKeystoreId = 0x0000BEEFU;
 const char * gszKeystoreFilename = "keystore.bin";
 
 const char* update_status_report_description(nxp_iot_UpdateStatusReport_UpdateStatus status);
-const char* claim_status_description(nxp_iot_AgentClaimStatus_ClaimStatus status);
+const char* claim_code_status_description(nxp_iot_AgentClaimStatus_ClaimStatus status);
 const char* rtp_status_description(nxp_iot_AgentRtpStatus_RtpStatus status);
 void print_status_report(const nxp_iot_UpdateStatusReport* status_report);
 
@@ -78,7 +78,7 @@ const char* update_status_report_description(nxp_iot_UpdateStatusReport_UpdateSt
 	}
 }
 
-const char* claim_status_description(nxp_iot_AgentClaimStatus_ClaimStatus status) {
+const char* claim_code_status_description(nxp_iot_AgentClaimStatus_ClaimStatus status) {
 	switch (status) {
 		case nxp_iot_AgentClaimStatus_ClaimStatus_SUCCESS: return "SUCCESS";
 		case nxp_iot_AgentClaimStatus_ClaimStatus_ERR_NOT_FOUND: return "ERR_NOT_FOUND";
@@ -123,11 +123,11 @@ void print_status_report(const nxp_iot_UpdateStatusReport* status_report) {
 
 	if (status_report->has_claimStatus) {
 		IOT_AGENT_INFO("  Status for claiming the device: 0x%04x: %s.", status_report->claimStatus.status,
-			claim_status_description(status_report->claimStatus.status));
+			claim_code_status_description(status_report->claimStatus.status));
 		for (size_t i = 0U; i < status_report->claimStatus.details_count; i++) {
 			nxp_iot_AgentClaimStatus_DetailedClaimStatus* s = &status_report->claimStatus.details[i];
 			IOT_AGENT_INFO("    On endpoint 0x%08x, status for claiming: 0x%04x: %s.", s->endpointId, s->status,
-				claim_status_description(s->status));
+				claim_code_status_description(s->status));
 		}
 	}
 
