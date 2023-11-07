@@ -5,20 +5,20 @@
 
 # NXP TODO: Get rid of -Wno-format -Wno-format-security
 
-IF(CMAKE_COMPILER_IS_GNUCC)
-  ADD_DEFINITIONS("-Wno-unused-function -Wno-format -Wno-format-security")
-ENDIF()
+if(CMAKE_COMPILER_IS_GNUCC)
+  add_definitions("-Wno-unused-function -Wno-format -Wno-format-security")
+endif()
 
 
 ###################### nxp_iot_agent_demo
 
-PROJECT(nxp_iot_agent_demo)
+project(nxp_iot_agent_demo)
 
 message("configuring project:\n" ${PROJECT_NAME} "\n")
 
-INCLUDE_DIRECTORIES(../inc/)
+include_directories(../inc/)
 
-FILE(
+file(
     GLOB
     iot_agent_demo_files
     ../inc/iot_agent_config.h
@@ -32,47 +32,47 @@ target_include_directories(
     PUBLIC ${IOT_AGENT_DIR}/ext/jsmn
 )
 
-ADD_EXECUTABLE(${PROJECT_NAME}
+add_executable(${PROJECT_NAME}
     ${iot_agent_demo_files}
     ${iot_agent_demo_port_files}
 )
 
-TARGET_LINK_LIBRARIES(
+target_link_libraries(
     ${PROJECT_NAME}
     SSS_APIs
     nxp_iot_agent
 )
 
-INSTALL(TARGETS ${PROJECT_NAME} DESTINATION bin)
+install(TARGETS ${PROJECT_NAME} DESTINATION bin)
 
 
 ###################### claimcode_inject
 
-PROJECT(claimcode_inject)
+project(claimcode_inject)
 
-ADD_EXECUTABLE(${PROJECT_NAME}
+add_executable(${PROJECT_NAME}
     utils/iot_agent_claimcode_inject.c
     apps/claimcode_inject_demo.c
 )
 
-TARGET_LINK_LIBRARIES(
+target_link_libraries(
     ${PROJECT_NAME}
     nxp_iot_agent
     SSS_APIs
 )
 
-INSTALL(TARGETS ${PROJECT_NAME} DESTINATION bin)
+install(TARGETS ${PROJECT_NAME} DESTINATION bin)
 
 
 ###################### remote_provisioning_client
 
-PROJECT(remote_provisioning_client)
+project(remote_provisioning_client)
 
-ADD_EXECUTABLE(${PROJECT_NAME}
+add_executable(${PROJECT_NAME}
     apps/remote_provisioning_client.c
 )
 
-TARGET_LINK_LIBRARIES(
+target_link_libraries(
     ${PROJECT_NAME}
     SSS_APIs
     rtp_client
@@ -81,18 +81,18 @@ TARGET_LINK_LIBRARIES(
 
 ###################### remote_provisioning_client_lib
 
-PROJECT(rtp_client)
+project(rtp_client)
 
-IF(SSS_HAVE_HOST_IMXLINUX)
-    FIND_PACKAGE(Threads)
-ENDIF()
+if(SSS_HAVE_HOST_IMXLINUX)
+    find_package(Threads)
+endif()
 
-ADD_LIBRARY(rtp_client STATIC
+add_library(rtp_client STATIC
     utils/iot_agent_rtp_client.c
     ${iot_agent_demo_port_files}
 )
 
-TARGET_LINK_LIBRARIES(
+target_link_libraries(
     ${PROJECT_NAME}
     SSS_APIs
     nxp_iot_agent
