@@ -3,8 +3,6 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-# configures the dependent nxp_iot_agent_common first
-add_subdirectory(src)
 
 PROJECT(nxp_iot_agent LANGUAGES C)
 
@@ -54,6 +52,7 @@ target_compile_definitions(nxp_iot_agent PRIVATE PB_FIELD_32BIT)
 
 
 add_subdirectory(ex)
+add_subdirectory(src)
 
 if(SSS_HAVE_HOST_IMXLINUX)
     install(TARGETS nxp_iot_agent DESTINATION lib)
