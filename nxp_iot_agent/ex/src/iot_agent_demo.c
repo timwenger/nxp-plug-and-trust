@@ -20,57 +20,18 @@
 #include <nxp_iot_agent_time.h>
 #include <se05x_APDU.h>
 
-#if IOT_AGENT_CLAIMCODE_INJECT_ENABLE
 #include <iot_agent_claimcode_inject.h>
-#define IOT_AGENT_CLAIMCODE_STRING      	    "insert_claimcode_from_e2logo"
-#endif
-
-#if SSS_HAVE_HOSTCRYPTO_MBEDTLS
-#include <fsl_sss_mbedtls_apis.h>
-#include <mbedtls/version.h>
-#endif
-
-#if SSS_HAVE_HOSTCRYPTO_OPENSSL
+#define IOT_AGENT_CLAIMCODE_STRING ENERSYS_CLAIMCODE
 #include <fsl_sss_openssl_apis.h>
 #include <openssl/opensslv.h>
-#endif
 
-#if SSS_HAVE_SSCP
-#include <fsl_sss_sscp.h>
-#include <sm_types.h>
-#endif
-
-#if SSS_HAVE_APPLET_SE05X_IOT
 #include <fsl_sss_se05x_apis.h>
-#endif
 
-#if AX_EMBEDDED && defined(USE_RTOS) && USE_RTOS == 1
-#ifndef INC_FREERTOS_H /* Header guard of FreeRTOS */
-#include "FreeRTOS.h"
-#include "FreeRTOSConfig.h"
-#endif /* INC_FREERTOS_H */
-#include "task.h"
-
-#include <iot_agent_network.h>
-
-static ex_sss_cloud_ctx_t gex_sss_demo_tls_ctx;
-ex_sss_cloud_ctx_t *pex_sss_demo_tls_ctx = &gex_sss_demo_tls_ctx;
-
-#endif
 
 #include <iot_agent_config.h>
 
 #define EX_SSS_BOOT_RTOS_STACK_SIZE (1024*8)
 #define MAX_UID_DECIMAL_STRING_SIZE 44U
-
-#if defined(USE_RTOS) && (USE_RTOS == 1)
-#if !SSS_HAVE_APPLET_SE051_UWB
-#include "iot_logging_task.h"
-#define LOGGING_TASK_PRIORITY   (tskIDLE_PRIORITY + 1)
-#define LOGGING_TASK_STACK_SIZE (300)
-#define LOGGING_QUEUE_LENGTH    (16)
-#endif // SSS_HAVE_APPLET_SE051_UWB
-#endif // USE_RTOS
 
 static ex_sss_boot_ctx_t gex_sss_demo_boot_ctx;
 ex_sss_boot_ctx_t *pex_sss_demo_boot_ctx = &gex_sss_demo_boot_ctx;
@@ -89,102 +50,11 @@ void print_status_report(const nxp_iot_UpdateStatusReport* status_report);
 void iot_agent_print_uid_integer(char* hexString, size_t len);
 iot_agent_status_t iot_agent_print_uid (sss_se05x_session_t* pSession);
 
-#if	((AX_EMBEDDED && defined(USE_RTOS) && USE_RTOS == 1) || (SSS_HAVE_HOSTCRYPTO_OPENSSL)) && (IOT_AGENT_COS_OVER_RTP_ENABLE == 1)
-
-#define COMMON_NAME_MAX_SIZE 256
-const PB_BYTES_ARRAY_T(AWS_ROOT_SERVER_CERT_SIZE) aws_root_server_cert =
-{ AWS_ROOT_SERVER_CERT_SIZE, AWS_ROOT_SERVER_CERT };
-const PB_BYTES_ARRAY_T(AZURE_ROOT_SERVER_CERT_SIZE) azure_root_server_cert =
-{ AZURE_ROOT_SERVER_CERT_SIZE, AZURE_ROOT_SERVER_CERT };
-#endif
-
 iot_agent_status_t agent_start(int argc, const char *argv[], ex_sss_boot_ctx_t *pCtx);
-
-#if AX_EMBEDDED && defined(USE_RTOS) && USE_RTOS == 1
-
-typedef struct cli_arguments
-{
-    int    c;
-    const char **v;
-} cli_arguments_t;
-
-void agent_start_task(void *args)
-{
-#if IOT_AGENT_TIME_MEASUREMENT_ENABLE
-    axTimeMeasurement_t iot_agent_demo_boot_time = { 0 };
-    initMeasurement(&iot_agent_demo_boot_time);
-#endif
-    iot_agent_status_t agent_status = IOT_AGENT_SUCCESS;
-
-    iot_agent_session_boot_rtos_task();
-
-    agent_status = network_init();
-    AGENT_SUCCESS_OR_EXIT_MSG("Network initialization failed");
-
-    const TickType_t xDelay = 2 * 1000 / portTICK_PERIOD_MS;
-
-#if IOT_AGENT_TIME_MEASUREMENT_ENABLE
-    concludeMeasurement(&iot_agent_demo_boot_time);
-    iot_agent_time.boot_time = getMeasurement(&iot_agent_demo_boot_time);
-    IOT_AGENT_INFO("Performance timing: DEVICE_INIT_TIME : %lums", iot_agent_time.boot_time);
-#endif
-
-    for (;;)
-    {
-        iot_agent_session_led_start();
-
-        cli_arguments_t* a = args;
-        agent_status = agent_start(a->c, a->v, &gex_sss_demo_boot_ctx);
-
-        if (agent_status == IOT_AGENT_SUCCESS)
-        {
-            iot_agent_session_led_success();
-        }
-        else
-        {
-            iot_agent_session_led_failure();
-        }
-
-        vTaskDelay(xDelay);
-    }
-exit:
-    return;
-}
-
-#endif
 
 int main(int argc, const char *argv[])
 {
-#if AX_EMBEDDED && defined(USE_RTOS) && USE_RTOS == 1
-
-	iot_agent_session_bm();
-
-	cli_arguments_t args;
-    args.c = argc;
-    args.v = argv;
-
-#if !SSS_HAVE_APPLET_SE051_UWB
-    xLoggingTaskInitialize(LOGGING_TASK_STACK_SIZE, LOGGING_TASK_PRIORITY, LOGGING_QUEUE_LENGTH);
-#endif
-
-    if (xTaskCreate(&agent_start_task,
-        "agent_start_session_task",
-        EX_SSS_BOOT_RTOS_STACK_SIZE,
-        (void *)&args,
-        (tskIDLE_PRIORITY),
-        NULL) != pdPASS) {
-        IOT_AGENT_INFO("Task creation failed!.\r\n");
-        while (1)
-            ;
-    }
-
-    /* Run RTOS */
-    vTaskStartScheduler();
-
-    return 1;
-#else
     return agent_start(argc, argv, &gex_sss_demo_boot_ctx);
-#endif
 }
 
 const char* update_status_report_description(nxp_iot_UpdateStatusReport_UpdateStatus status) {
@@ -230,6 +100,7 @@ const char* claim_status_description(nxp_iot_AgentClaimStatus_ClaimStatus status
 	}
 }
 
+// rtp = remote trust provisioning
 const char* rtp_status_description(nxp_iot_AgentRtpStatus_RtpStatus status) {
 	switch (status) {
 		case nxp_iot_AgentRtpStatus_RtpStatus_SUCCESS: return "SUCCESS";
@@ -246,6 +117,7 @@ const char* rtp_status_description(nxp_iot_AgentRtpStatus_RtpStatus status) {
 	}
 }
 
+// csp = cloud service provisioning
 const char* csp_status_description(nxp_iot_AgentCspStatus_CspStatus status) {
 	switch (status) {
 		case nxp_iot_AgentCspStatus_CspStatus_SUCCESS: return "SUCCESS";
@@ -278,13 +150,8 @@ void print_status_report(const nxp_iot_UpdateStatusReport* status_report) {
 			claim_status_description(status_report->claimStatus.status));
 		for (size_t i = 0U; i < status_report->claimStatus.details_count; i++) {
 			nxp_iot_AgentClaimStatus_DetailedClaimStatus* s = &status_report->claimStatus.details[i];
-#if AX_EMBEDDED && defined(USE_RTOS) && USE_RTOS == 1
-			IOT_AGENT_INFO("    On endpoint 0x%08lx, status for claiming: 0x%04x: %s.", s->endpointId, s->status,
-				claim_status_description(s->status));
-#else
 			IOT_AGENT_INFO("    On endpoint 0x%08x, status for claiming: 0x%04x: %s.", s->endpointId, s->status,
 				claim_status_description(s->status));
-#endif
 		}
 	}
 
@@ -293,13 +160,8 @@ void print_status_report(const nxp_iot_UpdateStatusReport* status_report) {
 			rtp_status_description(status_report->rtpStatus.status));
 		for (size_t i = 0U; i < status_report->rtpStatus.details_count; i++) {
 			nxp_iot_AgentRtpStatus_RtpObjectStatus* s = &status_report->rtpStatus.details[i];
-#if AX_EMBEDDED && defined(USE_RTOS) && USE_RTOS == 1
-			IOT_AGENT_INFO("    On endpoint 0x%08lx, for object 0x%08lx, status: 0x%04x: %s.", s->endpointId, s->objectId,
-				s->status, rtp_status_description(s->status));
-#else
 			IOT_AGENT_INFO("    On endpoint 0x%08x, for object 0x%08x, status: 0x%04x: %s.", s->endpointId, s->objectId,
 				s->status, rtp_status_description(s->status));
-#endif
 		}
 	}
 
@@ -308,13 +170,8 @@ void print_status_report(const nxp_iot_UpdateStatusReport* status_report) {
 			csp_status_description(status_report->cspStatus.status));
 		for (size_t i = 0U; i < status_report->cspStatus.details_count; i++) {
 			nxp_iot_AgentCspStatus_CspServiceStatus* s = &status_report->cspStatus.details[i];
-#if AX_EMBEDDED && defined(USE_RTOS) && USE_RTOS == 1
-			IOT_AGENT_INFO("    On endpoint 0x%08lx, for service %lu, status: 0x%04x: %s.", s->endpointId,
-				(uint32_t) s->serviceId, s->status, csp_status_description(s->status));
-#else
 			IOT_AGENT_INFO("    On endpoint 0x%08x, for service %d, status: 0x%04x: %s.", s->endpointId,
 				(uint32_t) s->serviceId, s->status, csp_status_description(s->status));
-#endif
 		}
 	}
 }
@@ -428,10 +285,6 @@ iot_agent_status_t agent_start(int argc, const char *argv[], ex_sss_boot_ctx_t *
     //Intializations of local variables
     size_t number_of_services = 0U;
 	nxp_iot_UpdateStatusReport status_report = nxp_iot_UpdateStatusReport_init_default;
-#if	((AX_EMBEDDED && defined(USE_RTOS) && USE_RTOS == 1) || (SSS_HAVE_HOSTCRYPTO_OPENSSL)) && (IOT_AGENT_COS_OVER_RTP_ENABLE == 1)
-	nxp_iot_ServiceDescriptor aws_service_descriptor = nxp_iot_ServiceDescriptor_init_default;
-	nxp_iot_ServiceDescriptor azure_service_descriptor = nxp_iot_ServiceDescriptor_init_default;
-#endif
 
     IOT_AGENT_INFO("Start");
 
@@ -439,12 +292,7 @@ iot_agent_status_t agent_start(int argc, const char *argv[], ex_sss_boot_ctx_t *
 	agent_status = iot_agent_session_init(argc, argv, pCtx);
     AGENT_SUCCESS_OR_EXIT();
 
-#if defined(WINAPI_FAMILY) && (WINAPI_FAMILY == WINAPI_FAMILY_APP)
-    _putenv("OPENSSL_CONF=openssl_conf_v102.cnf");
-    _putenv("JRCP_SERVER_SOCKET=127.0.0.1:8050");
 
-#endif
-#if IOT_AGENT_CLAIMCODE_INJECT_ENABLE
 #if IOT_AGENT_TIME_MEASUREMENT_ENABLE
     axTimeMeasurement_t iot_agent_claimcode_inject_time = { 0 };
     initMeasurement(&iot_agent_claimcode_inject_time);
@@ -455,7 +303,6 @@ iot_agent_status_t agent_start(int argc, const char *argv[], ex_sss_boot_ctx_t *
     concludeMeasurement(&iot_agent_claimcode_inject_time);
     iot_agent_time.claimcode_inject_time = getMeasurement(&iot_agent_claimcode_inject_time);
 #endif  //IOT_AGENT_TIME_MEASUREMENT_ENABLE
-#endif  //IOT_AGENT_CLAIMCODE_INJECT_ENABLE
 
     // doc: initialization of contexts - start
     agent_status = iot_agent_init(&iot_agent_context);
@@ -520,9 +367,7 @@ iot_agent_status_t agent_start(int argc, const char *argv[], ex_sss_boot_ctx_t *
 #if IOT_AGENT_TIME_MEASUREMENT_ENABLE
     concludeMeasurement(&iot_agent_demo_time);
     iot_agent_time.init_time = getMeasurement(&iot_agent_demo_time);
-#if IOT_AGENT_CLAIMCODE_INJECT_ENABLE
     iot_agent_time.init_time -= iot_agent_time.claimcode_inject_time;
-#endif
 #endif
 
     // doc: update device configuration - start
