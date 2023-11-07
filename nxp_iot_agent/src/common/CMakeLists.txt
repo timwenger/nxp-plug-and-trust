@@ -24,7 +24,7 @@ target_include_directories(
     PUBLIC ../../inc
     PUBLIC ../../platform
     PUBLIC ../protobuf
-    PUBLIC ${SIMW_INC_DIR} # includes from the common middleware libraries
+    PUBLIC ${COMMON_INC_DIRS}
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE PB_FIELD_32BIT)
