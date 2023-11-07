@@ -8,9 +8,6 @@ PROJECT(nxp_iot_agent LANGUAGES C)
 
 message("configuring project:\n" ${PROJECT_NAME} "\n")
 
-set(IOT_AGENT_DIR  ${SIMW_LIB_DIR}/nxp_iot_agent)
-
-
 file(
     GLOB
     NXP_IOT_AGENT_FILES

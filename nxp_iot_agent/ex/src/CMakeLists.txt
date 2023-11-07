@@ -18,18 +18,10 @@ message("configuring project:\n" ${PROJECT_NAME} "\n")
 
 include_directories(../inc/)
 
-
-
-target_include_directories(
-    nxp_iot_agent
-    PUBLIC ${IOT_AGENT_DIR}/ext/jsmn
-)
-
 set(IOT_AGENT_DEMO_FILES
     ../inc/iot_agent_config.h
     utils/iot_agent_claimcode_inject.c
     iot_agent_demo.c
-    ${IOT_AGENT_DIR}/ext/jsmn/jsmn.c
 )
 
 add_executable(${PROJECT_NAME}
